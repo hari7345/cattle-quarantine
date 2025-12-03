@@ -22,6 +22,8 @@ export default function LoginForm({ navigation }) {
   const handleLogin = () => {
     console.log("Login pressed", { email, password });
     // Add authentication logic here
+    // For now, navigate directly to Dashboard
+    navigation.navigate("Dashboard");
   };
 
   const handleBackToInitial = () => {
