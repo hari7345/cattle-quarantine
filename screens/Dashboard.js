@@ -8,10 +8,11 @@ import {
   Dimensions,
   SafeAreaView,
   Animated,
+  Image,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
-
+import Location from "../assets/images/location.png";
 const { width } = Dimensions.get("window");
 
 export default function Dashboard({ navigation }) {
@@ -113,12 +114,12 @@ export default function Dashboard({ navigation }) {
                 <Text style={styles.greeting}>Hello, {getGreeting()}</Text>
                 <Text style={styles.date}>{formatDate(currentDate)}</Text>
               </View>
-              <TouchableOpacity style={styles.notificationButton}>
+              {/* <TouchableOpacity style={styles.notificationButton}>
                 <View style={styles.notificationBadge}>
                   <Text style={styles.notificationCount}>3</Text>
                 </View>
                 <Text style={styles.notificationIcon}>🔔</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
 
             {/* Weather Widget */}
@@ -133,7 +134,7 @@ export default function Dashboard({ navigation }) {
             >
               <View style={styles.weatherContent}>
                 <View style={styles.weatherHeader}>
-                  <Text style={styles.locationIcon}>📍</Text>
+                  <Image source={Location} style={styles.locationIcon} />
                   <Text style={styles.locationText}>
                     Farm Weather - Oakroot Ranch
                   </Text>
@@ -370,7 +371,8 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   locationIcon: {
-    fontSize: 16,
+    width: 20,
+    height: 20,
     marginRight: 6,
   },
   locationText: {
