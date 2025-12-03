@@ -258,7 +258,10 @@ export default function Dashboard({ navigation }) {
             <Text style={styles.navItemIcon}>📊</Text>
             <Text style={styles.navItemLabel}>Statistic</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem}>
+          <TouchableOpacity
+            style={styles.navItem}
+            onPress={() => navigation.navigate("Profile")}
+          >
             <Text style={styles.navItemIcon}>👤</Text>
             <Text style={styles.navItemLabel}>My Profile</Text>
           </TouchableOpacity>
