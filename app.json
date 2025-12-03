@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "cattle-quarantine-app",
+    "slug": "cattle-quarantine-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.cattlequarantine.app"
+    },
+    "android": {
+      "package": "com.cattlequarantine.app"
+    }
+  }
+}
