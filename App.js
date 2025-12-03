@@ -74,6 +74,24 @@ export default function App() {
             <Text style={styles.buttonText}>Get Started</Text>
           </LinearGradient>
         </TouchableOpacity>
+
+        {/* Scan QR Code Button */}
+        <TouchableOpacity
+          style={[styles.button, styles.glassButton, { marginTop: 10 }]}
+          // onPress={handleGetStarted}
+          activeOpacity={0.8}
+        >
+          <LinearGradient
+            colors={["rgba(26, 95, 58, 0.25)", "rgba(22, 82, 49, 0.35)"]}
+            style={styles.buttonGradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            <Text style={[styles.buttonText, styles.glassButtonText]}>
+              Scan QR Code
+            </Text>
+          </LinearGradient>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -82,7 +100,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f0",
+    backgroundColor: "#f0f7f4",
   },
   backgroundPattern: {
     position: "absolute",
@@ -259,5 +277,21 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
     letterSpacing: 0.5,
+  },
+  glassButton: {
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    borderWidth: 2,
+    borderColor: "rgba(26, 95, 58, 0.3)",
+    shadowColor: "#1a5f3a",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+  },
+  glassButtonText: {
+    color: "#1a5f3a",
+    fontWeight: "700",
   },
 });
