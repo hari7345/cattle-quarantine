@@ -5,6 +5,7 @@ import InitialPage from "./screens/InitialPage";
 import LoginForm from "./screens/LoginForm";
 import Dashboard from "./screens/Dashboard";
 import Profile from "./screens/Profile";
+import RFIDScanner from "./screens/RFIDScanner";
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +21,7 @@ export default function App() {
         <Stack.Screen name="Login" component={LoginForm} />
         <Stack.Screen name="Dashboard" component={Dashboard} />
         <Stack.Screen name="Profile" component={Profile} />
+        <Stack.Screen name="RFIDScanner" component={RFIDScanner} />
       </Stack.Navigator>
     </NavigationContainer>
   );

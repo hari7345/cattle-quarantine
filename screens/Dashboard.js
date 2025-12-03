@@ -218,7 +218,11 @@ export default function Dashboard({ navigation }) {
             </View>
 
             {/* Alert Banner */}
-            <TouchableOpacity style={styles.alertBanner} activeOpacity={0.9}>
+            <TouchableOpacity
+              style={styles.alertBanner}
+              activeOpacity={0.9}
+              onPress={() => navigation.navigate("RFIDScanner")}
+            >
               <LinearGradient
                 colors={["#16a085", "#1abc9c", "#2ecc71"]}
                 start={{ x: 0, y: 0 }}
@@ -375,7 +379,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 16,
     backgroundColor: "rgba(144, 238, 144, 0.25)", // Light green with more transparency
-    padding: 16,
+    padding: 8,
     borderRadius: 25, // More rounded for bubble effect
     borderWidth: 1.5,
     borderColor: "rgba(144, 238, 144, 0.4)", // Softer border
