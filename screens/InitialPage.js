@@ -55,11 +55,11 @@ export default function InitialPage({ navigation }) {
         {/* Text Content */}
         <View style={styles.textContainer}>
           <Text style={styles.title}>
-            Everything Your Farm{"\n"}Needs in One App
+            Cattle Quarantine{"\n"}Management System
           </Text>
           <Text style={styles.subtitle}>
-            Keep your herd healthy and organized with simple tools that save
-            time and help you stay in control.
+            Monitor and manage cattle quarantine protocols efficiently with
+            comprehensive tracking and real-time health monitoring.
           </Text>
         </View>
 
@@ -75,7 +75,7 @@ export default function InitialPage({ navigation }) {
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
           >
-            <Text style={styles.buttonText}>Sign In</Text>
+            <Text style={styles.buttonText}>Officer Login</Text>
           </LinearGradient>
         </TouchableOpacity>
 
@@ -92,7 +92,7 @@ export default function InitialPage({ navigation }) {
             end={{ x: 1, y: 1 }}
           >
             <Text style={[styles.buttonText, styles.glassButtonText]}>
-              Scan QR Code
+              Scan RFID Tag
             </Text>
           </LinearGradient>
         </TouchableOpacity>

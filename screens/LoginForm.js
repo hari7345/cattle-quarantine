@@ -63,7 +63,7 @@ export default function LoginForm({ navigation }) {
           <View style={styles.header}>
             <Text style={styles.title}>Welcome Back!</Text>
             <Text style={styles.subtitle}>
-              Sign in to access your farm management dashboard
+              Sign in to access your QMS dashboard
             </Text>
           </View>
 
@@ -71,11 +71,11 @@ export default function LoginForm({ navigation }) {
           <View style={styles.formContainer}>
             {/* Email Input */}
             <View style={styles.inputContainer}>
-              <Text style={styles.label}>Email</Text>
+              <Text style={styles.label}>User ID</Text>
               <View style={styles.inputWrapper}>
                 <TextInput
                   style={styles.input}
-                  placeholder="Enter your email"
+                  placeholder="Enter your user ID"
                   placeholderTextColor="#a0aec0"
                   value={email}
                   onChangeText={setEmail}
@@ -102,9 +102,9 @@ export default function LoginForm({ navigation }) {
             </View>
 
             {/* Forgot Password Link */}
-            <TouchableOpacity style={styles.forgotPassword}>
+            {/* <TouchableOpacity style={styles.forgotPassword}>
               <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             {/* Login Button */}
             <TouchableOpacity

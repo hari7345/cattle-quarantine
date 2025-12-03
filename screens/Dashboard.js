@@ -13,7 +13,7 @@ import {
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
 import Location from "../assets/images/location.png";
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
 export default function Dashboard({ navigation }) {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -121,85 +121,108 @@ export default function Dashboard({ navigation }) {
                 <Text style={styles.notificationIcon}>🔔</Text>
               </TouchableOpacity> */}
             </View>
+          </LinearGradient>
 
-            {/* Weather Widget */}
-            <Animated.View
-              style={[
-                styles.weatherCard,
-                {
-                  opacity: fadeAnim,
-                  transform: [{ scale: scaleAnim }],
-                },
-              ]}
-            >
-              <View style={styles.weatherContent}>
-                <View style={styles.weatherHeader}>
-                  <Image source={Location} style={styles.locationIcon} />
-                  <Text style={styles.locationText}>
-                    Farm Weather - Oakroot Ranch
-                  </Text>
-                </View>
+          {/* Weather Widget - Floating between sections */}
+          <Animated.View
+            style={[
+              styles.weatherCard,
+              {
+                opacity: fadeAnim,
+                transform: [{ scale: scaleAnim }],
+              },
+            ]}
+          >
+            <View style={styles.weatherContent}>
+              <View style={styles.weatherHeader}>
+                <Image source={Location} style={styles.locationIcon} />
+                <Text style={styles.locationText}>
+                  Farm Weather - Oakroot Ranch
+                </Text>
+              </View>
 
-                <View style={styles.weatherMain}>
-                  <View style={styles.temperatureSection}>
-                    <Text style={styles.temperature}>+28°C</Text>
-                    <View style={styles.tempRange}>
-                      <Text style={styles.tempLabel}>H:25°</Text>
-                      <Text style={styles.tempLabel}>L:15°</Text>
-                    </View>
-                  </View>
-                  <View style={styles.weatherIconContainer}>
-                    <Text style={styles.weatherEmoji}>🌤️</Text>
+              <View style={styles.weatherMain}>
+                <View style={styles.temperatureSection}>
+                  <Text style={styles.temperature}>+28°C</Text>
+                  <View style={styles.tempRange}>
+                    <Text style={styles.tempLabel}>H:25°</Text>
+                    <Text style={styles.tempLabel}>L:15°</Text>
                   </View>
                 </View>
-
-                <ScrollView
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  style={styles.weatherDetailsBubbles}
-                  contentContainerStyle={styles.weatherBubblesContainer}
-                >
-                  <View style={styles.weatherBubble}>
-                    <Text style={styles.bubbleLabel}>💧 Humidity</Text>
-                    <Text style={styles.bubbleValue}>40%</Text>
-                  </View>
-                  <View style={styles.weatherBubble}>
-                    <Text style={styles.bubbleLabel}>🌧️ Precipitation</Text>
-                    <Text style={styles.bubbleValue}>5.1 ml</Text>
-                  </View>
-                  <View style={styles.weatherBubble}>
-                    <Text style={styles.bubbleLabel}>🔽 Pressure</Text>
-                    <Text style={styles.bubbleValue}>450 hpa</Text>
-                  </View>
-                  <View style={styles.weatherBubble}>
-                    <Text style={styles.bubbleLabel}>💨 Wind</Text>
-                    <Text style={styles.bubbleValue}>23m/s</Text>
-                  </View>
-                </ScrollView>
-
-                <View style={styles.sunTimes}>
-                  <View style={styles.sunTimeItem}>
-                    <Text style={styles.sunTimeValue}>5:25 am</Text>
-                    <Text style={styles.sunTimeLabel}>Sunrise</Text>
-                  </View>
-                  <View style={styles.sunPath}>
-                    <View style={styles.sunPathArc}>
-                      <Text style={styles.sunIcon}>☀️</Text>
-                    </View>
-                  </View>
-                  <View style={styles.sunTimeItem}>
-                    <Text style={styles.sunTimeValue}>8:04 pm</Text>
-                    <Text style={styles.sunTimeLabel}>Sunset</Text>
-                  </View>
+                <View style={styles.weatherIconContainer}>
+                  <Text style={styles.weatherEmoji}>🌤️</Text>
                 </View>
               </View>
-            </Animated.View>
-          </LinearGradient>
+
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.weatherDetailsBubbles}
+                contentContainerStyle={styles.weatherBubblesContainer}
+              >
+                <View style={styles.weatherBubble}>
+                  <Text style={styles.bubbleLabel}>💧 Humidity</Text>
+                  <Text style={styles.bubbleValue}>40%</Text>
+                </View>
+                <View style={styles.weatherBubble}>
+                  <Text style={styles.bubbleLabel}>🌧️ Precipitation</Text>
+                  <Text style={styles.bubbleValue}>5.1 ml</Text>
+                </View>
+                <View style={styles.weatherBubble}>
+                  <Text style={styles.bubbleLabel}>🔽 Pressure</Text>
+                  <Text style={styles.bubbleValue}>450 hpa</Text>
+                </View>
+                <View style={styles.weatherBubble}>
+                  <Text style={styles.bubbleLabel}>💨 Wind</Text>
+                  <Text style={styles.bubbleValue}>23m/s</Text>
+                </View>
+              </ScrollView>
+
+              {/* <View style={styles.sunTimes}>
+                <View style={styles.sunTimeItem}>
+                  <Text style={styles.sunTimeValue}>5:25 am</Text>
+                  <Text style={styles.sunTimeLabel}>Sunrise</Text>
+                </View>
+                <View style={styles.sunPath}>
+                  <View style={styles.sunPathArc}>
+                    <Text style={styles.sunIcon}>☀️</Text>
+                  </View>
+                </View>
+                <View style={styles.sunTimeItem}>
+                  <Text style={styles.sunTimeValue}>8:04 pm</Text>
+                  <Text style={styles.sunTimeLabel}>Sunset</Text>
+                </View>
+              </View> */}
+            </View>
+          </Animated.View>
 
           {/* White Background Section */}
           <View style={styles.whiteSection}>
+            {/* Decorative Pattern Elements */}
+            <View style={styles.patternCircle1} />
+            <View style={styles.patternCircle2} />
+            <View style={styles.patternCircle3} />
+            <View style={styles.patternCircle4} />
             {/* Navigation Cards Grid */}
             <View style={styles.cardsGrid}>
+              {navigationCards.map((card, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.navCard}
+                  onPress={() => handleCardPress(card.route)}
+                  activeOpacity={0.8}
+                >
+                  <View style={styles.navCardContent}>
+                    <View style={styles.navCardIconBg}>
+                      <Text style={styles.navCardIcon}>{card.icon}</Text>
+                    </View>
+                    <Text style={styles.navCardTitle}>{card.title}</Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <View style={styles.cardsGrid2}>
               {navigationCards.map((card, index) => (
                 <TouchableOpacity
                   key={index}
@@ -295,27 +318,69 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: 20,
+    position: "relative",
   },
   topSection: {
-    paddingBottom: 100,
+    height: height * 0.3,
+    paddingBottom: 20,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
   },
   whiteSection: {
     backgroundColor: "#f5f6fa",
-    marginTop: -80,
+    flex: 1,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     paddingTop: 20,
+    position: "relative",
+    overflow: "hidden",
+  },
+  patternCircle1: {
+    position: "absolute",
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: "rgba(26, 95, 58, 0.03)",
+    top: 100,
+    right: -50,
+  },
+  patternCircle2: {
+    position: "absolute",
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: "rgba(26, 95, 58, 0.04)",
+    bottom: 200,
+    left: -30,
+  },
+  patternCircle3: {
+    position: "absolute",
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "rgba(26, 95, 58, 0.02)",
+    top: 400,
+    left: 40,
+  },
+  patternCircle4: {
+    position: "absolute",
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: "rgba(26, 95, 58, 0.03)",
+    bottom: 50,
+    right: 30,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
     paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 20,
+    paddingTop: 15,
+    paddingBottom: 10,
   },
   greeting: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "800",
     color: "#ffffff",
     marginBottom: 4,
@@ -324,7 +389,7 @@ const styles = StyleSheet.create({
     textShadowRadius: 4,
   },
   date: {
-    fontSize: 12,
+    fontSize: 11,
     color: "rgba(255, 255, 255, 0.9)",
     fontWeight: "500",
   },
@@ -357,17 +422,21 @@ const styles = StyleSheet.create({
     fontWeight: "800",
   },
   weatherCard: {
-    marginHorizontal: 20,
-    borderRadius: 20,
+    position: "absolute",
+    top: height * 0.1,
+    left: 20,
+    right: 20,
+    zIndex: 10,
+    borderRadius: 32,
     overflow: "hidden",
-    elevation: 4,
+    elevation: 15,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 8,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
+    shadowOpacity: 0.25,
+    shadowRadius: 20,
   },
   weatherContent: {
     backgroundColor: "#ffffff",
@@ -378,11 +447,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 16,
-    backgroundColor: "rgba(144, 238, 144, 0.25)", // Light green with more transparency
-    padding: 8,
-    borderRadius: 25, // More rounded for bubble effect
-    borderWidth: 1.5,
-    borderColor: "rgba(144, 238, 144, 0.4)", // Softer border
+    // backgroundColor: "rgba(144, 238, 144, 0.25)", // Light green with more transparency
+    // padding: 8,
+    // borderRadius: 25, // More rounded for bubble effect
+    // borderWidth: 1.5,
+    // borderColor: "rgba(144, 238, 144, 0.4)", // Softer border
     shadowColor: "rgba(34, 139, 34, 0.3)",
     shadowOffset: {
       width: 0,
@@ -440,7 +509,7 @@ const styles = StyleSheet.create({
   },
   weatherDetailsBubbles: {
     marginBottom: 16,
-    paddingBottom: 16,
+    // paddingBottom: 16,
   },
   weatherBubblesContainer: {
     paddingRight: 20,
@@ -518,7 +587,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingHorizontal: 20,
     justifyContent: "space-between",
+    marginBottom: 10,
+    marginTop: 80,
+    zIndex: 1,
+  },
+  cardsGrid2: {
+    flexDirection: "row",
+    paddingHorizontal: 20,
+    justifyContent: "space-between",
     marginBottom: 20,
+    zIndex: 1,
   },
   navCard: {
     width: (width - 52) / 3,
@@ -545,28 +623,28 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   navCardContent: {
-    padding: 16,
+    padding: 12,
     alignItems: "center",
-    minHeight: 140,
+    minHeight: 100,
     justifyContent: "center",
   },
   navCardIconBg: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 8,
   },
   navCardIcon: {
-    fontSize: 40,
+    fontSize: 32,
   },
   navCardTitle: {
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: "600",
     color: "#2d3436",
     textAlign: "center",
-    lineHeight: 14,
+    lineHeight: 12,
   },
   alertBanner: {
     marginHorizontal: 20,
@@ -581,6 +659,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 10,
     marginBottom: 20,
+    zIndex: 1,
   },
   alertGradient: {
     position: "relative",

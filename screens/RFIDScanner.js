@@ -141,11 +141,11 @@ export default function RFIDScanner({ navigation }) {
       setRfidData(data);
       setShowSuccess(true);
 
-      // Reset after 3 seconds
+      // Navigate to form after showing success message
       setTimeout(() => {
         setShowSuccess(false);
-        setScanned(false);
-      }, 3000);
+        navigation.navigate("CattleDetailsForm", { rfidData: data });
+      }, 1500);
     }
   };
 
