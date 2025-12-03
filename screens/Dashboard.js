@@ -201,7 +201,6 @@ export default function Dashboard({ navigation }) {
                   onPress={() => handleCardPress(card.route)}
                   activeOpacity={0.8}
                 >
-                  {index === 0 && <View style={styles.activeIndicatorCard} />}
                   <View style={styles.navCardContent}>
                     <View style={styles.navCardIconBg}>
                       <Text style={styles.navCardIcon}>{card.icon}</Text>
@@ -518,7 +517,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   navCardIcon: {
-    fontSize: 32,
+    fontSize: 40,
   },
   navCardTitle: {
     fontSize: 10,
