@@ -153,24 +153,29 @@ export default function Dashboard({ navigation }) {
                   </View>
                 </View>
 
-                <View style={styles.weatherDetails}>
-                  <View style={styles.weatherDetailItem}>
-                    <Text style={styles.weatherDetailLabel}>Humidity</Text>
-                    <Text style={styles.weatherDetailValue}>40%</Text>
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  style={styles.weatherDetailsBubbles}
+                  contentContainerStyle={styles.weatherBubblesContainer}
+                >
+                  <View style={styles.weatherBubble}>
+                    <Text style={styles.bubbleLabel}>💧 Humidity</Text>
+                    <Text style={styles.bubbleValue}>40%</Text>
                   </View>
-                  <View style={styles.weatherDetailItem}>
-                    <Text style={styles.weatherDetailLabel}>Precipitation</Text>
-                    <Text style={styles.weatherDetailValue}>5.1 ml</Text>
+                  <View style={styles.weatherBubble}>
+                    <Text style={styles.bubbleLabel}>🌧️ Precipitation</Text>
+                    <Text style={styles.bubbleValue}>5.1 ml</Text>
                   </View>
-                  <View style={styles.weatherDetailItem}>
-                    <Text style={styles.weatherDetailLabel}>Pressure</Text>
-                    <Text style={styles.weatherDetailValue}>450 hpa</Text>
+                  <View style={styles.weatherBubble}>
+                    <Text style={styles.bubbleLabel}>🔽 Pressure</Text>
+                    <Text style={styles.bubbleValue}>450 hpa</Text>
                   </View>
-                  <View style={styles.weatherDetailItem}>
-                    <Text style={styles.weatherDetailLabel}>Wind</Text>
-                    <Text style={styles.weatherDetailValue}>23m/s</Text>
+                  <View style={styles.weatherBubble}>
+                    <Text style={styles.bubbleLabel}>💨 Wind</Text>
+                    <Text style={styles.bubbleValue}>23m/s</Text>
                   </View>
-                </View>
+                </ScrollView>
 
                 <View style={styles.sunTimes}>
                   <View style={styles.sunTimeItem}>
@@ -369,6 +374,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 16,
+    backgroundColor: "rgba(144, 238, 144, 0.25)", // Light green with more transparency
+    padding: 16,
+    borderRadius: 25, // More rounded for bubble effect
+    borderWidth: 1.5,
+    borderColor: "rgba(144, 238, 144, 0.4)", // Softer border
+    shadowColor: "rgba(34, 139, 34, 0.3)",
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 15, // Larger, softer shadow
+    elevation: 5,
+    backdropFilter: "blur(10px)", // Adds blur effect (works on web)
   },
   locationIcon: {
     width: 20,
@@ -415,28 +434,42 @@ const styles = StyleSheet.create({
   weatherEmoji: {
     fontSize: 64,
   },
-  weatherDetails: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+  weatherDetailsBubbles: {
     marginBottom: 16,
     paddingBottom: 16,
-    // borderBottomWidth: 1,
-    // borderBottomColor: "#1a5f3a40",
   },
-  weatherDetailItem: {
+  weatherBubblesContainer: {
+    paddingRight: 20,
+  },
+  weatherBubble: {
+    backgroundColor: "rgba(144, 238, 144, 0.2)",
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+    marginRight: 8,
+    borderWidth: 1,
+    borderColor: "rgba(144, 238, 144, 0.4)",
     alignItems: "center",
-    flex: 1,
+    minWidth: 90,
+    shadowColor: "rgba(34, 139, 34, 0.2)",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 3,
   },
-  weatherDetailLabel: {
-    fontSize: 11,
+  bubbleLabel: {
+    fontSize: 10,
     color: "#636e72",
-    marginBottom: 4,
+    marginBottom: 3,
     fontWeight: "500",
   },
-  weatherDetailValue: {
-    fontSize: 13,
+  bubbleValue: {
+    fontSize: 14,
     fontWeight: "700",
-    color: "#2d3436",
+    color: "#1a5f3a",
   },
   sunTimes: {
     flexDirection: "row",
