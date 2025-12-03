@@ -12,6 +12,7 @@ import {
   Modal,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
@@ -46,6 +47,7 @@ export default function CattleDetailsForm({ route, navigation }) {
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [activeField, setActiveField] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     Animated.parallel([
@@ -75,167 +77,124 @@ export default function CattleDetailsForm({ route, navigation }) {
     }, 2000);
   };
 
-  const renderInput = (label, field, placeholder, icon, options = {}) => {
-    const { keyboardType = "default", multiline = false, maxLength } = options;
-
-    return (
-      <Animated.View
-        style={[
-          styles.inputContainer,
-          {
-            opacity: fadeAnim,
-            transform: [{ translateY: slideAnim }],
-          },
-        ]}
-      >
-        <View style={styles.labelContainer}>
-          <Text style={styles.icon}>{icon}</Text>
-          <Text style={styles.label}>{label}</Text>
-        </View>
-        <TextInput
-          style={[
-            styles.input,
-            multiline && styles.textArea,
-            activeField === field && styles.inputActive,
-          ]}
-          value={formData[field]}
-          onChangeText={(value) => handleInputChange(field, value)}
-          placeholder={placeholder}
-          placeholderTextColor="#a0a0a0"
-          keyboardType={keyboardType}
-          multiline={multiline}
-          maxLength={maxLength}
-          onFocus={() => setActiveField(field)}
-          onBlur={() => setActiveField(null)}
-        />
-      </Animated.View>
-    );
+  const handleImageUpload = () => {
+    // Image upload logic would go here
+    console.log("Open camera for image upload");
   };
 
-  const renderPicker = (label, field, options, icon) => {
+  const handleClearField = (field) => {
+    setFormData((prev) => ({ ...prev, [field]: "" }));
+  };
+
+  const renderInput = (label, field, placeholder, options = {}) => {
+    const {
+      keyboardType = "default",
+      multiline = false,
+      halfWidth = false,
+      showClearIcon = true,
+      editable = true,
+    } = options;
+
     return (
-      <Animated.View
-        style={[
-          styles.inputContainer,
-          {
-            opacity: fadeAnim,
-            transform: [{ translateY: slideAnim }],
-          },
-        ]}
+      <View
+        style={[styles.inputContainer, halfWidth && styles.halfInputContainer]}
       >
-        <View style={styles.labelContainer}>
-          <Text style={styles.icon}>{icon}</Text>
-          <Text style={styles.label}>{label}</Text>
-        </View>
-        <View style={styles.pickerContainer}>
-          {options.map((option) => (
+        <Text style={styles.label}>{label}</Text>
+        <View style={styles.inputWrapper}>
+          <TextInput
+            style={[
+              styles.input,
+              multiline && styles.textArea,
+              activeField === field && styles.inputActive,
+              !editable && styles.inputDisabled,
+            ]}
+            value={formData[field]}
+            onChangeText={(value) => handleInputChange(field, value)}
+            placeholder={placeholder}
+            placeholderTextColor="#b0b0b0"
+            keyboardType={keyboardType}
+            multiline={multiline}
+            editable={editable}
+            onFocus={() => setActiveField(field)}
+            onBlur={() => setActiveField(null)}
+          />
+          {showClearIcon && formData[field] && editable && (
             <TouchableOpacity
-              key={option}
-              style={[
-                styles.pickerOption,
-                formData[field] === option && styles.pickerOptionActive,
-              ]}
-              onPress={() => handleInputChange(field, option)}
+              style={styles.clearIcon}
+              onPress={() => handleClearField(field)}
             >
-              <Text
-                style={[
-                  styles.pickerOptionText,
-                  formData[field] === option && styles.pickerOptionTextActive,
-                ]}
-              >
-                {option}
-              </Text>
+              <Text style={styles.clearIconText}>✕</Text>
             </TouchableOpacity>
-          ))}
+          )}
         </View>
-      </Animated.View>
+      </View>
     );
   };
 
-  const renderAgeInputs = () => {
+  const renderDropdown = (label, field, placeholder, halfWidth = false) => {
+    // Simple click handler to cycle through options (for demo purposes)
+    const handleDropdownPress = () => {
+      if (field === "gender") {
+        const options = ["Male", "Female"];
+        const currentIndex = options.indexOf(formData[field]);
+        const nextIndex = (currentIndex + 1) % options.length;
+        handleInputChange(field, options[nextIndex]);
+      } else if (field === "behavior") {
+        const options = ["Calm", "Aggressive", "Active"];
+        const currentIndex = options.indexOf(formData[field]);
+        const nextIndex = (currentIndex + 1) % options.length;
+        handleInputChange(field, options[nextIndex]);
+      }
+    };
+
     return (
-      <Animated.View
-        style={[
-          styles.inputContainer,
-          {
-            opacity: fadeAnim,
-            transform: [{ translateY: slideAnim }],
-          },
-        ]}
+      <View
+        style={[styles.inputContainer, halfWidth && styles.halfInputContainer]}
       >
-        <View style={styles.labelContainer}>
-          <Text style={styles.icon}>📅</Text>
-          <Text style={styles.label}>Age</Text>
-        </View>
-        <View style={styles.doubleInputContainer}>
-          <View style={styles.halfInput}>
-            <Text style={styles.subLabel}>Years</Text>
-            <TextInput
-              style={[
-                styles.input,
-                activeField === "ageYears" && styles.inputActive,
-              ]}
-              value={formData.ageYears}
-              onChangeText={(value) => handleInputChange("ageYears", value)}
-              placeholder="0"
-              placeholderTextColor="#a0a0a0"
-              keyboardType="numeric"
-              maxLength={2}
-              onFocus={() => setActiveField("ageYears")}
-              onBlur={() => setActiveField(null)}
-            />
-          </View>
-          <View style={styles.halfInput}>
-            <Text style={styles.subLabel}>Months</Text>
-            <TextInput
-              style={[
-                styles.input,
-                activeField === "ageMonths" && styles.inputActive,
-              ]}
-              value={formData.ageMonths}
-              onChangeText={(value) => handleInputChange("ageMonths", value)}
-              placeholder="0"
-              placeholderTextColor="#a0a0a0"
-              keyboardType="numeric"
-              maxLength={2}
-              onFocus={() => setActiveField("ageMonths")}
-              onBlur={() => setActiveField(null)}
-            />
-          </View>
-        </View>
-      </Animated.View>
+        <Text style={styles.label}>{label}</Text>
+        <TouchableOpacity
+          style={styles.dropdownButton}
+          onPress={handleDropdownPress}
+        >
+          <Text
+            style={[
+              styles.dropdownText,
+              !formData[field] && styles.dropdownPlaceholder,
+            ]}
+          >
+            {formData[field] || placeholder}
+          </Text>
+          <Text style={styles.dropdownIcon}>▼</Text>
+        </TouchableOpacity>
+      </View>
     );
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={0}
       >
         {/* Header */}
-        <LinearGradient
-          colors={["#1a5f3a", "#2d7a4f", "#3d8f5f"]}
-          style={styles.header}
-        >
-          <View style={styles.headerContent}>
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={() => navigation.goBack()}
-            >
-              <Text style={styles.backButtonText}>←</Text>
-            </TouchableOpacity>
-            <View style={styles.headerTitleContainer}>
-              <Text style={styles.headerTitle}>Cattle Details</Text>
-              <Text style={styles.headerSubtitle}>
-                RFID: {formData.rfidTag}
-              </Text>
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.headerButton}
+            onPress={() => navigation.goBack()}
+          >
+            <View style={styles.headerIconCircle}>
+              <Text style={styles.headerIcon}>←</Text>
             </View>
-            <View style={styles.backButton} />
-          </View>
-        </LinearGradient>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Cattle Details</Text>
+          <TouchableOpacity style={styles.headerButton}>
+            <View style={styles.headerIconCircle}>
+              <Text style={styles.headerIcon}>↗</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
 
         {/* Form Content */}
         <ScrollView
@@ -244,165 +203,157 @@ export default function CattleDetailsForm({ route, navigation }) {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.formContainer}>
-            {/* RFID Fetch Indicator */}
-            <Animated.View
-              style={[
-                styles.rfidBadge,
-                {
-                  opacity: fadeAnim,
-                  transform: [{ translateY: slideAnim }],
-                },
-              ]}
-            >
-              <LinearGradient
-                colors={["#16a085", "#1abc9c", "#2ecc71"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.rfidBadgeGradient}
-              >
-                <Text style={styles.rfidBadgeIcon}>✓</Text>
-                <View style={styles.rfidBadgeTextContainer}>
-                  <Text style={styles.rfidBadgeTitle}>
-                    Data Fetched from RFID
-                  </Text>
-                  <Text style={styles.rfidBadgeSubtitle}>
-                    Review and edit the details below
-                  </Text>
-                </View>
-              </LinearGradient>
-            </Animated.View>
             {/* Section: Basic Information */}
             <View style={styles.section}>
-              <View style={styles.sectionHeader}>
-                <View style={styles.sectionHeaderLine} />
-                <Text style={styles.sectionTitle}>Basic Information</Text>
-                <View style={styles.sectionHeaderLine} />
+              <Text style={styles.sectionTitle}>Basic Information</Text>
+
+              {renderInput("RFID Tag*", "rfidTag", "Enter RFID tag", {
+                editable: false,
+              })}
+
+              <View style={styles.row}>
+                {renderInput("Breed*", "breed", "Enter breed", {
+                  halfWidth: true,
+                })}
+                {renderDropdown("Gender*", "gender", "Select", true)}
               </View>
 
-              {renderInput("Breed", "breed", "Enter breed", "🐄")}
-              {renderAgeInputs()}
-              {renderPicker("Gender", "gender", ["Male", "Female"], "⚥")}
-              {renderInput("Colour", "colour", "Enter colour", "🎨")}
+              <View style={styles.row}>
+                {renderInput("Age (Years)*", "ageYears", "Years", {
+                  halfWidth: true,
+                  keyboardType: "numeric",
+                })}
+                {renderInput("Age (Months)*", "ageMonths", "Months", {
+                  halfWidth: true,
+                  keyboardType: "numeric",
+                })}
+              </View>
+
+              {renderInput("Colour", "colour", "Enter colour")}
             </View>
 
             {/* Section: Physical Attributes */}
             <View style={styles.section}>
-              <View style={styles.sectionHeader}>
-                <View style={styles.sectionHeaderLine} />
-                <Text style={styles.sectionTitle}>Physical Attributes</Text>
-                <View style={styles.sectionHeaderLine} />
+              <Text style={styles.sectionTitle}>Physical Attributes</Text>
+
+              <View style={styles.row}>
+                {renderInput("Weight (kg)*", "weight", "Enter weight", {
+                  halfWidth: true,
+                  keyboardType: "numeric",
+                })}
+                {renderInput("Height (cm)", "height", "Enter height", {
+                  halfWidth: true,
+                  keyboardType: "numeric",
+                })}
               </View>
 
-              {renderInput("Weight (kg)", "weight", "Enter weight", "⚖️", {
-                keyboardType: "numeric",
-              })}
-              {renderInput("Height (cm)", "height", "Enter height", "📏", {
-                keyboardType: "numeric",
-              })}
               {renderInput(
                 "Distinguishing Marks",
                 "distinguishingMarks",
                 "Enter any distinguishing marks",
-                "✨",
-                { multiline: true }
+                {
+                  multiline: true,
+                  showClearIcon: true,
+                }
               )}
             </View>
 
             {/* Section: Location & Arrival */}
             <View style={styles.section}>
-              <View style={styles.sectionHeader}>
-                <View style={styles.sectionHeaderLine} />
-                <Text style={styles.sectionTitle}>Location & Arrival</Text>
-                <View style={styles.sectionHeaderLine} />
-              </View>
+              <Text style={styles.sectionTitle}>Location & Arrival</Text>
 
               {renderInput(
                 "Shed/Batch Number",
                 "shedNumber",
-                "Enter shed or batch number",
-                "🏠"
+                "Enter shed or batch number"
               )}
-              {renderInput("Arrival Date", "arrivalDate", "YYYY-MM-DD", "📆")}
-              {renderInput("Arrival Time", "arrivalTime", "HH:MM AM/PM", "🕐")}
+
+              <View style={styles.row}>
+                {renderInput("Arrival Date*", "arrivalDate", "YYYY-MM-DD", {
+                  halfWidth: true,
+                })}
+                {renderInput("Arrival Time", "arrivalTime", "HH:MM AM/PM", {
+                  halfWidth: true,
+                })}
+              </View>
             </View>
 
             {/* Section: Health Records */}
             <View style={styles.section}>
-              <View style={styles.sectionHeader}>
-                <View style={styles.sectionHeaderLine} />
-                <Text style={styles.sectionTitle}>Health Records</Text>
-                <View style={styles.sectionHeaderLine} />
-              </View>
+              <Text style={styles.sectionTitle}>Health Records</Text>
 
               {renderInput(
                 "Vaccination Status",
                 "vaccinationStatus",
-                "Enter vaccination status",
-                "💉"
+                "Enter vaccination status"
               )}
-              {renderInput(
-                "Deworming Date",
-                "dewormingDate",
-                "YYYY-MM-DD",
-                "🔬"
-              )}
-              {renderInput(
-                "Temperature (°C)",
-                "temperature",
-                "Enter temperature",
-                "🌡️",
-                { keyboardType: "decimal-pad" }
-              )}
+
+              <View style={styles.row}>
+                {renderInput("Deworming Date", "dewormingDate", "YYYY-MM-DD", {
+                  halfWidth: true,
+                })}
+                {renderInput(
+                  "Temperature (°C)",
+                  "temperature",
+                  "Enter temperature",
+                  {
+                    halfWidth: true,
+                    keyboardType: "decimal-pad",
+                  }
+                )}
+              </View>
+
               {renderInput(
                 "Last Checkup Date",
                 "lastCheckupDate",
-                "YYYY-MM-DD",
-                "🩺"
+                "YYYY-MM-DD"
               )}
+
+              {renderDropdown("Behavior", "behavior", "Select behavior")}
             </View>
 
-            {/* Section: Behavior */}
+            {/* Section: Upload Image */}
             <View style={styles.section}>
-              <View style={styles.sectionHeader}>
-                <View style={styles.sectionHeaderLine} />
-                <Text style={styles.sectionTitle}>Behavior</Text>
-                <View style={styles.sectionHeaderLine} />
+              <Text style={styles.sectionTitle}>Upload Image</Text>
+              <View style={styles.uploadContainer}>
+                <View style={styles.uploadIconContainer}>
+                  <View style={styles.uploadIconCircle}>
+                    <Text style={styles.uploadIcon}>📷</Text>
+                  </View>
+                  <Text style={styles.uploadText}>Tap to upload photo</Text>
+                  <Text style={styles.uploadSubtext}>
+                    JPG, PNG, or PDF (max 800x400px)
+                  </Text>
+                </View>
+                <Text style={styles.uploadOr}>OR</Text>
+                <TouchableOpacity
+                  style={styles.cameraButton}
+                  onPress={handleImageUpload}
+                >
+                  <Text style={styles.cameraButtonText}>Open Camera</Text>
+                </TouchableOpacity>
               </View>
+            </View>
 
-              {renderPicker(
-                "General Behavior",
-                "behavior",
-                ["Calm", "Aggressive", "Active"],
-                "🎭"
-              )}
+            {/* Action Buttons */}
+            <View style={styles.actionButtons}>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={() => navigation.goBack()}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.saveButton}
+                onPress={handleSave}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.saveButtonText}>Save Cattle Details</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </ScrollView>
-
-        {/* Bottom Action Buttons */}
-        <View style={styles.bottomActions}>
-          <TouchableOpacity
-            style={styles.cancelButton}
-            onPress={() => navigation.navigate("Dashboard")}
-          >
-            <Text style={styles.cancelButtonText}>Cancel</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.saveButton}
-            onPress={handleSave}
-            activeOpacity={0.8}
-          >
-            <LinearGradient
-              colors={["#16a085", "#1abc9c", "#2ecc71"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.saveButtonGradient}
-            >
-              <Text style={styles.saveButtonText}>Save Cattle Details</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
 
         {/* Success Modal */}
         <Modal
@@ -436,277 +387,245 @@ export default function CattleDetailsForm({ route, navigation }) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#1a5f3a",
+    backgroundColor: "#ffffff",
   },
   container: {
     flex: 1,
-    backgroundColor: "#f5f6fa",
+    backgroundColor: "#f8f9fa",
   },
   header: {
-    paddingTop: 20,
-    paddingBottom: 20,
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-  },
-  headerContent: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 20,
+    paddingVertical: 16,
+    backgroundColor: "#ffffff",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e8e8e8",
   },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
+  headerButton: {
+    width: 44,
+    height: 44,
+  },
+  headerIconCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "#1a5f3a",
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.3)",
   },
-  backButtonText: {
-    fontSize: 24,
+  headerIcon: {
+    fontSize: 20,
     color: "#ffffff",
     fontWeight: "600",
   },
-  headerTitleContainer: {
-    flex: 1,
-    alignItems: "center",
-  },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#ffffff",
-    marginBottom: 4,
-  },
-  headerSubtitle: {
-    fontSize: 12,
-    color: "rgba(255, 255, 255, 0.8)",
-    fontWeight: "500",
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#2c3e50",
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 100,
+    paddingBottom: 30,
   },
   formContainer: {
     paddingHorizontal: 20,
     paddingTop: 20,
   },
-  rfidBadge: {
+  section: {
     marginBottom: 24,
-    borderRadius: 16,
-    overflow: "hidden",
-    elevation: 3,
-    shadowColor: "#16a085",
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#2c3e50",
+    marginBottom: 16,
+  },
+  row: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  inputContainer: {
+    marginBottom: 16,
+  },
+  halfInputContainer: {
+    flex: 1,
+  },
+  label: {
+    fontSize: 13,
+    fontWeight: "500",
+    color: "#5a6c7d",
+    marginBottom: 8,
+  },
+  inputWrapper: {
+    position: "relative",
+  },
+  input: {
+    backgroundColor: "#ffffff",
+    borderRadius: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 15,
+    color: "#2c3e50",
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+  },
+  inputActive: {
+    borderColor: "#6FCF97",
+    borderWidth: 2,
+    shadowColor: "#6FCF97",
     shadowOffset: {
       width: 0,
       height: 2,
     },
     shadowOpacity: 0.2,
-    shadowRadius: 8,
-  },
-  rfidBadgeGradient: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 16,
-  },
-  rfidBadgeIcon: {
-    fontSize: 28,
-    marginRight: 12,
-  },
-  rfidBadgeTextContainer: {
-    flex: 1,
-  },
-  rfidBadgeTitle: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: "#ffffff",
-    marginBottom: 2,
-  },
-  rfidBadgeSubtitle: {
-    fontSize: 11,
-    fontWeight: "500",
-    color: "rgba(255, 255, 255, 0.9)",
-  },
-  section: {
-    marginBottom: 30,
-  },
-  sectionHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  sectionHeaderLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: "#e0e0e0",
-  },
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: "#1a5f3a",
-    marginHorizontal: 12,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-  inputContainer: {
-    marginBottom: 20,
-  },
-  labelContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  icon: {
-    fontSize: 18,
-    marginRight: 8,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#2d3436",
-  },
-  subLabel: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "#636e72",
-    marginBottom: 6,
-  },
-  input: {
-    backgroundColor: "#ffffff",
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    fontSize: 15,
-    color: "#2d3436",
-    borderWidth: 2,
-    borderColor: "#e0e0e0",
-    elevation: 1,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-  },
-  inputActive: {
-    borderColor: "#1a5f3a",
-    elevation: 3,
-    shadowOpacity: 0.1,
     shadowRadius: 4,
+    elevation: 2,
+  },
+  inputDisabled: {
+    backgroundColor: "#f5f6fa",
+    color: "#8e9aaa",
   },
   textArea: {
     minHeight: 80,
     textAlignVertical: "top",
+    paddingTop: 12,
   },
-  doubleInputContainer: {
+  clearIcon: {
+    position: "absolute",
+    right: 12,
+    top: 12,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: "#c8d0d9",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  clearIconText: {
+    fontSize: 12,
+    color: "#ffffff",
+    fontWeight: "600",
+  },
+  dropdownButton: {
+    backgroundColor: "#ffffff",
+    borderRadius: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 15,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
     flexDirection: "row",
     justifyContent: "space-between",
-    gap: 12,
+    alignItems: "center",
   },
-  halfInput: {
-    flex: 1,
-  },
-  pickerContainer: {
-    flexDirection: "row",
-    gap: 8,
-    flexWrap: "wrap",
-  },
-  pickerOption: {
-    backgroundColor: "#ffffff",
-    borderRadius: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+  dropdownButtonActive: {
+    borderColor: "#6FCF97",
     borderWidth: 2,
-    borderColor: "#e0e0e0",
-    elevation: 1,
-    shadowColor: "#000",
+    shadowColor: "#6FCF97",
     shadowOffset: {
       width: 0,
-      height: 1,
+      height: 2,
     },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-  },
-  pickerOptionActive: {
-    backgroundColor: "#1a5f3a",
-    borderColor: "#1a5f3a",
-    elevation: 3,
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.2,
     shadowRadius: 4,
+    elevation: 2,
   },
-  pickerOptionText: {
+  dropdownText: {
+    fontSize: 15,
+    color: "#2c3e50",
+  },
+  dropdownPlaceholder: {
+    color: "#b0b0b0",
+  },
+  dropdownIcon: {
+    fontSize: 10,
+    color: "#8e9aaa",
+  },
+  uploadContainer: {
+    backgroundColor: "#ffffff",
+    borderRadius: 12,
+    padding: 24,
+    borderWidth: 2,
+    borderColor: "#e8e8e8",
+    borderStyle: "dashed",
+    alignItems: "center",
+  },
+  uploadIconContainer: {
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  uploadIconCircle: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "#e8f5e9",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  uploadIcon: {
+    fontSize: 28,
+  },
+  uploadText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#636e72",
+    color: "#2c3e50",
+    marginBottom: 4,
   },
-  pickerOptionTextActive: {
+  uploadSubtext: {
+    fontSize: 11,
+    color: "#8e9aaa",
+  },
+  uploadOr: {
+    fontSize: 12,
+    color: "#8e9aaa",
+    marginVertical: 8,
+  },
+  cameraButton: {
+    backgroundColor: "#1a5f3a",
+    borderRadius: 8,
+    paddingHorizontal: 32,
+    paddingVertical: 10,
+  },
+  cameraButtonText: {
+    fontSize: 14,
+    fontWeight: "600",
     color: "#ffffff",
   },
-  bottomActions: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: "#ffffff",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
+  actionButtons: {
     flexDirection: "row",
     gap: 12,
-    elevation: 12,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: -4,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    marginTop: 24,
+    marginBottom: 16,
   },
   cancelButton: {
     flex: 1,
-    backgroundColor: "#f5f6fa",
-    borderRadius: 12,
-    paddingVertical: 16,
+    backgroundColor: "#ffffff",
+    borderRadius: 8,
+    paddingVertical: 14,
     alignItems: "center",
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: "#e0e0e0",
   },
   cancelButtonText: {
-    fontSize: 16,
-    fontWeight: "700",
+    fontSize: 15,
+    fontWeight: "600",
     color: "#636e72",
   },
   saveButton: {
     flex: 2,
-    borderRadius: 12,
-    overflow: "hidden",
-    elevation: 4,
-    shadowColor: "#16a085",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-  },
-  saveButtonGradient: {
-    paddingVertical: 16,
+    backgroundColor: "#1a5f3a",
+    borderRadius: 8,
+    paddingVertical: 14,
     alignItems: "center",
   },
   saveButtonText: {
-    fontSize: 16,
-    fontWeight: "700",
+    fontSize: 15,
+    fontWeight: "600",
     color: "#ffffff",
   },
   successOverlay: {
