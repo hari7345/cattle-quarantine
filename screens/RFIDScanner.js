@@ -8,17 +8,16 @@ import {
   SafeAreaView,
   Animated,
   Modal,
-  Alert,
+  Vibration,
+  Image,
 } from "react-native";
-import { CameraView, useCameraPermissions } from "expo-camera";
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
-
+import Rfid from "../assets/images/rfid.png";
 const { width, height } = Dimensions.get("window");
 
 export default function RFIDScanner({ navigation }) {
-  const [permission, requestPermission] = useCameraPermissions();
-  const [scanned, setScanned] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [rfidData, setRfidData] = useState("");
 
@@ -27,56 +26,94 @@ export default function RFIDScanner({ navigation }) {
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const cornerAnim = useRef(new Animated.Value(0)).current;
   const successAnim = useRef(new Animated.Value(0)).current;
+  const waveAnim = useRef(new Animated.Value(0)).current;
+  const iconPulseAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    // Scanning line animation
+    // Icon pulsating animation (always running)
     Animated.loop(
       Animated.sequence([
-        Animated.timing(scanLineAnim, {
-          toValue: 1,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(scanLineAnim, {
-          toValue: 0,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-
-    // Pulse animation for corners
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 1.1,
+        Animated.timing(iconPulseAnim, {
+          toValue: 1.15,
           duration: 1000,
           useNativeDriver: true,
         }),
-        Animated.timing(pulseAnim, {
+        Animated.timing(iconPulseAnim, {
           toValue: 1,
           duration: 1000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-
-    // Corner highlight animation
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(cornerAnim, {
-          toValue: 1,
-          duration: 1500,
-          useNativeDriver: true,
-        }),
-        Animated.timing(cornerAnim, {
-          toValue: 0,
-          duration: 1500,
           useNativeDriver: true,
         }),
       ])
     ).start();
   }, []);
+
+  useEffect(() => {
+    if (isScanning) {
+      // Scanning line animation
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(scanLineAnim, {
+            toValue: 1,
+            duration: 1500,
+            useNativeDriver: true,
+          }),
+          Animated.timing(scanLineAnim, {
+            toValue: 0,
+            duration: 1500,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+
+      // Pulse animation for corners
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulseAnim, {
+            toValue: 1.2,
+            duration: 800,
+            useNativeDriver: true,
+          }),
+          Animated.timing(pulseAnim, {
+            toValue: 1,
+            duration: 800,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+
+      // Corner highlight animation
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(cornerAnim, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(cornerAnim, {
+            toValue: 0,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+
+      // Wave animation for RFID signals
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(waveAnim, {
+            toValue: 1,
+            duration: 2000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(waveAnim, {
+            toValue: 0,
+            duration: 0,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    }
+  }, [isScanning]);
 
   useEffect(() => {
     if (showSuccess) {
@@ -91,62 +128,37 @@ export default function RFIDScanner({ navigation }) {
     }
   }, [showSuccess]);
 
-  if (!permission) {
-    return <View style={styles.container} />;
-  }
+  const startScanning = () => {
+    setIsScanning(true);
 
-  if (!permission.granted) {
-    return (
-      <SafeAreaView style={styles.safeArea}>
-        <LinearGradient
-          colors={["#1a5f3a", "#2d7a4f", "#3d8f5f"]}
-          style={styles.permissionContainer}
-        >
-          <View style={styles.permissionContent}>
-            <Text style={styles.permissionIcon}>📸</Text>
-            <Text style={styles.permissionTitle}>Camera Access Required</Text>
-            <Text style={styles.permissionText}>
-              We need camera access to scan RFID tags on your cattle
-            </Text>
-            <TouchableOpacity
-              style={styles.permissionButton}
-              onPress={requestPermission}
-            >
-              <LinearGradient
-                colors={["#16a085", "#1abc9c", "#2ecc71"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.permissionButtonGradient}
-              >
-                <Text style={styles.permissionButtonText}>
-                  Grant Permission
-                </Text>
-              </LinearGradient>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={() => navigation.goBack()}
-            >
-              <Text style={styles.backButtonText}>Go Back</Text>
-            </TouchableOpacity>
-          </View>
-        </LinearGradient>
-      </SafeAreaView>
-    );
-  }
+    // Simulate RFID detection after 2-3 seconds
+    // In production, this would be replaced with actual RFID reader integration
+    setTimeout(() => {
+      handleRFIDDetected();
+    }, 2500);
+  };
 
-  const handleBarCodeScanned = ({ type, data }) => {
-    if (!scanned) {
-      setScanned(true);
-      setRfidData(data);
-      setShowSuccess(true);
+  const handleRFIDDetected = () => {
+    // Generate a simulated RFID tag (in production, this comes from RFID reader)
+    const simulatedRFID = `RFID-${Date.now().toString().slice(-8)}`;
 
-      // Navigate to form after showing success message
-      setTimeout(() => {
-        setShowSuccess(false);
-        navigation.navigate("CattleDetailsForm", { rfidData: data });
-      }, 1500);
-    }
+    setIsScanning(false);
+    setRfidData(simulatedRFID);
+
+    // Vibrate on successful scan (pattern: short-pause-short-pause-long)
+    Vibration.vibrate([0, 100, 50, 100, 50, 200]);
+
+    setShowSuccess(true);
+
+    // Navigate to form after showing success message
+    setTimeout(() => {
+      setShowSuccess(false);
+      navigation.navigate("CattleDetailsForm", { rfidData: simulatedRFID });
+    }, 1800);
+  };
+
+  const cancelScanning = () => {
+    setIsScanning(false);
   };
 
   const scanLineTranslateY = scanLineAnim.interpolate({
@@ -159,98 +171,128 @@ export default function RFIDScanner({ navigation }) {
     outputRange: [0.5, 1],
   });
 
+  const waveScale = waveAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 2.5],
+  });
+
+  const waveOpacity = waveAnim.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: [0.8, 0.4, 0],
+  });
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="light" />
-      <View style={styles.container}>
-        {/* Camera View */}
-        <CameraView
-          style={styles.camera}
-          facing="back"
-          onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
-          barcodeScannerSettings={{
-            barcodeTypes: [
-              "qr",
-              "ean13",
-              "ean8",
-              "code128",
-              "code39",
-              "pdf417",
-              "aztec",
-            ],
-          }}
-        >
-          {/* Top Header */}
-          <View style={styles.header}>
-            <TouchableOpacity
-              style={styles.headerButton}
-              onPress={() => navigation.goBack()}
-            >
-              <Text style={styles.headerButtonText}>✕</Text>
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>Scan RFID Tag</Text>
-            <View style={styles.headerButton} />
-          </View>
+      <LinearGradient
+        colors={["#1a5f3a", "#2d7a4f", "#3d8f5f"]}
+        style={styles.container}
+      >
+        {/* Top Header */}
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.headerButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Text style={styles.headerButtonText}>✕</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>RFID Scanner</Text>
+          <View style={styles.headerButton} />
+        </View>
 
-          {/* Scanning Frame */}
-          <View style={styles.scanningArea}>
-            <View style={styles.overlay}>
-              {/* Instructions */}
-              <View style={styles.instructionContainer}>
-                <Text style={styles.instructionText}>
-                  Position the RFID tag within the frame
-                </Text>
+        {/* Scanning Area */}
+        <View style={styles.scanningArea}>
+          <View style={styles.overlay}>
+            {/* Instructions */}
+            <View style={styles.instructionContainer}>
+              <Text style={styles.instructionText}>
+                {isScanning
+                  ? "Hold device near RFID tag..."
+                  : "Tap button below to scan RFID tag"}
+              </Text>
+              {isScanning && (
                 <View style={styles.statusBadge}>
                   <View style={styles.statusDot} />
                   <Text style={styles.statusText}>Scanning...</Text>
                 </View>
-              </View>
+              )}
+            </View>
 
-              {/* Scanning Frame */}
-              <View style={styles.frameContainer}>
-                {/* Corner decorations */}
-                <Animated.View
-                  style={[
-                    styles.corner,
-                    styles.cornerTopLeft,
-                    {
-                      opacity: cornerOpacity,
-                      transform: [{ scale: pulseAnim }],
-                    },
-                  ]}
-                />
-                <Animated.View
-                  style={[
-                    styles.corner,
-                    styles.cornerTopRight,
-                    {
-                      opacity: cornerOpacity,
-                      transform: [{ scale: pulseAnim }],
-                    },
-                  ]}
-                />
-                <Animated.View
-                  style={[
-                    styles.corner,
-                    styles.cornerBottomLeft,
-                    {
-                      opacity: cornerOpacity,
-                      transform: [{ scale: pulseAnim }],
-                    },
-                  ]}
-                />
-                <Animated.View
-                  style={[
-                    styles.corner,
-                    styles.cornerBottomRight,
-                    {
-                      opacity: cornerOpacity,
-                      transform: [{ scale: pulseAnim }],
-                    },
-                  ]}
-                />
+            {/* RFID Scanning Frame */}
+            <View style={styles.frameContainer}>
+              {/* Corner decorations */}
+              {isScanning && (
+                <>
+                  <Animated.View
+                    style={[
+                      styles.corner,
+                      styles.cornerTopLeft,
+                      {
+                        opacity: cornerOpacity,
+                        transform: [{ scale: pulseAnim }],
+                      },
+                    ]}
+                  />
+                  <Animated.View
+                    style={[
+                      styles.corner,
+                      styles.cornerTopRight,
+                      {
+                        opacity: cornerOpacity,
+                        transform: [{ scale: pulseAnim }],
+                      },
+                    ]}
+                  />
+                  <Animated.View
+                    style={[
+                      styles.corner,
+                      styles.cornerBottomLeft,
+                      {
+                        opacity: cornerOpacity,
+                        transform: [{ scale: pulseAnim }],
+                      },
+                    ]}
+                  />
+                  <Animated.View
+                    style={[
+                      styles.corner,
+                      styles.cornerBottomRight,
+                      {
+                        opacity: cornerOpacity,
+                        transform: [{ scale: pulseAnim }],
+                      },
+                    ]}
+                  />
+                </>
+              )}
 
-                {/* Scanning Line */}
+              {/* RFID Wave Animations */}
+              {isScanning && (
+                <>
+                  <Animated.View
+                    style={[
+                      styles.rfidWave,
+                      {
+                        transform: [{ scale: waveScale }],
+                        opacity: waveOpacity,
+                      },
+                    ]}
+                  />
+                  <Animated.View
+                    style={[
+                      styles.rfidWave,
+                      styles.rfidWaveDelay,
+                      {
+                        transform: [{ scale: waveScale }],
+                        opacity: waveOpacity,
+                      },
+                    ]}
+                  />
+                </>
+              )}
+
+              {/* Scanning Line */}
+              {isScanning && (
                 <Animated.View
                   style={[
                     styles.scanLine,
@@ -268,34 +310,71 @@ export default function RFIDScanner({ navigation }) {
                     style={styles.scanLineGradient}
                   />
                 </Animated.View>
+              )}
 
-                {/* Center Icon */}
-                <View style={styles.centerIconContainer}>
-                  <LinearGradient
-                    colors={[
-                      "rgba(22, 160, 133, 0.8)",
-                      "rgba(46, 204, 113, 0.8)",
+              {/* Center Icon */}
+              <View style={styles.centerIconContainer}>
+                <LinearGradient
+                  colors={
+                    isScanning
+                      ? ["rgba(22, 160, 133, 0.9)", "rgba(46, 204, 113, 0.9)"]
+                      : ["rgba(22, 160, 133, 0.5)", "rgba(46, 204, 113, 0.5)"]
+                  }
+                  style={styles.centerIconBg}
+                >
+                  {/* <Text style={styles.centerIcon}>📡</Text> */}
+                  <Animated.Image
+                    source={Rfid}
+                    style={[
+                      styles.centerIcon,
+                      {
+                        transform: [{ scale: iconPulseAnim }],
+                      },
                     ]}
-                    style={styles.centerIconBg}
-                  >
-                    <Text style={styles.centerIcon}>🏷️</Text>
-                  </LinearGradient>
-                </View>
-              </View>
-
-              {/* Bottom Info */}
-              <View style={styles.infoContainer}>
-                <View style={styles.infoCard}>
-                  <Text style={styles.infoTitle}>📱 How to Scan</Text>
-                  <Text style={styles.infoText}>
-                    Hold your device steady and align the RFID tag with the
-                    scanning frame
-                  </Text>
-                </View>
+                    resizeMode="contain"
+                  />
+                </LinearGradient>
               </View>
             </View>
+
+            {/* Bottom Info and Button */}
+            <View style={styles.infoContainer}>
+              <View style={styles.infoCard}>
+                {/* <Text style={styles.infoTitle}>📡 RFID Technology</Text> */}
+                <Text style={styles.infoText}>
+                  Hold your device close to the RFID tag.
+                </Text>
+              </View>
+
+              {/* Scan Button */}
+              {!isScanning ? (
+                <TouchableOpacity
+                  style={styles.scanButton}
+                  onPress={startScanning}
+                  activeOpacity={0.8}
+                >
+                  <LinearGradient
+                    colors={["#16a085", "#1abc9c", "#2ecc71"]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.scanButtonGradient}
+                  >
+                    <Text style={styles.scanButtonText}>Start Scanning</Text>
+                    {/* <Text style={styles.scanButtonIcon}>📡</Text> */}
+                  </LinearGradient>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  style={styles.cancelButton}
+                  onPress={cancelScanning}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
-        </CameraView>
+        </View>
 
         {/* Success Modal */}
         <Modal
@@ -339,7 +418,7 @@ export default function RFIDScanner({ navigation }) {
             </Animated.View>
           </View>
         </Modal>
-      </View>
+      </LinearGradient>
     </SafeAreaView>
   );
 }
@@ -347,13 +426,9 @@ export default function RFIDScanner({ navigation }) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#000000",
+    backgroundColor: "#1a5f3a",
   },
   container: {
-    flex: 1,
-    backgroundColor: "#000000",
-  },
-  camera: {
     flex: 1,
   },
   header: {
@@ -368,7 +443,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1,
@@ -501,19 +576,23 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255, 255, 255, 0.3)",
   },
   centerIcon: {
-    fontSize: 40,
+    width: 50,
+    height: 50,
+    resizeMode: "contain",
   },
   infoContainer: {
     paddingHorizontal: 20,
     alignItems: "center",
+    gap: 20,
   },
   infoCard: {
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
     borderRadius: 16,
     padding: 20,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
+    borderColor: "rgba(255, 255, 255, 0.2)",
     maxWidth: 340,
+    width: "100%",
   },
   infoTitle: {
     fontSize: 14,
@@ -522,60 +601,67 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   infoText: {
-    fontSize: 12,
-    color: "rgba(255, 255, 255, 0.8)",
-    lineHeight: 18,
-  },
-  permissionContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  permissionContent: {
-    alignItems: "center",
-    paddingHorizontal: 40,
-  },
-  permissionIcon: {
-    fontSize: 80,
-    marginBottom: 24,
-  },
-  permissionTitle: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#ffffff",
-    marginBottom: 12,
-    textAlign: "center",
-  },
-  permissionText: {
-    fontSize: 16,
+    fontSize: 13,
     color: "rgba(255, 255, 255, 0.9)",
+    lineHeight: 20,
     textAlign: "center",
-    lineHeight: 24,
-    marginBottom: 32,
   },
-  permissionButton: {
+  rfidWave: {
+    position: "absolute",
+    width: 280,
+    height: 280,
+    borderRadius: 140,
+    borderWidth: 3,
+    borderColor: "rgba(46, 204, 113, 0.6)",
+  },
+  rfidWaveDelay: {
+    borderColor: "rgba(26, 188, 156, 0.6)",
+  },
+  scanButton: {
     width: "100%",
+    maxWidth: 340,
     borderRadius: 16,
     overflow: "hidden",
-    marginBottom: 16,
+    elevation: 8,
+    shadowColor: "#2ecc71",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
   },
-  permissionButtonGradient: {
-    paddingVertical: 16,
+  scanButtonGradient: {
+    paddingVertical: 18,
     paddingHorizontal: 32,
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
   },
-  permissionButtonText: {
-    fontSize: 16,
+  scanButtonText: {
+    fontSize: 18,
     fontWeight: "700",
     color: "#ffffff",
   },
-  backButton: {
-    paddingVertical: 12,
+  scanButtonIcon: {
+    fontSize: 24,
   },
-  backButtonText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "rgba(255, 255, 255, 0.8)",
+  cancelButton: {
+    width: "100%",
+    maxWidth: 340,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    borderRadius: 16,
+    backgroundColor: "rgba(231, 76, 60, 0.9)",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.3)",
+  },
+  cancelButtonText: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#ffffff",
   },
   successOverlay: {
     flex: 1,
