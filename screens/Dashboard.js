@@ -80,10 +80,10 @@ export default function Dashboard({ navigation }) {
   };
 
   const navigationCards = [
-    { title: "My Cattle", icon: "🐄", route: "MyCattle" },
+    { title: "My Live Stock", icon: "🐄", route: "MyLive Stock" },
     { title: "Health & Medical Record", icon: "🩺", route: "HealthRecords" },
     {
-      title: "Under Observation Cattles",
+      title: "Under Observation Live Stocks",
       icon: "👁️",
       route: "UnderObservation",
     },
@@ -262,7 +262,7 @@ export default function Dashboard({ navigation }) {
                     <Text style={styles.alertIconText}>🐄</Text>
                   </View>
                   <View style={styles.alertTextContainer}>
-                    <Text style={styles.alertTitle}>Add Your Cattle</Text>
+                    <Text style={styles.alertTitle}>Add Your Live Stock</Text>
                     <Text style={styles.alertSubtitle}>
                       Start tracking your herd
                     </Text>
@@ -284,12 +284,15 @@ export default function Dashboard({ navigation }) {
             <View style={styles.activeIndicator} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.navItem}>
-            <Text style={styles.navItemIcon}>📋</Text>
-            <Text style={styles.navItemLabel}>Tasks</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem}>
             <Text style={styles.navItemIcon}>📊</Text>
             <Text style={styles.navItemLabel}>Statistic</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.navItem}
+            onPress={() => navigation.navigate("RFIDScanner")}
+          >
+            <Text style={styles.navItemIcon}>📋</Text>
+            <Text style={styles.navItemLabel}>Scanner</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.navItem}

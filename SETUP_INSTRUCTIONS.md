@@ -127,7 +127,7 @@ npx expo install react-native-screens react-native-safe-area-context
 ## Project Structure
 
 ```
-cattle-quarantine-app/
+Live Stock-quarantine-app/
 ├── App.js                    # Main app component
 ├── app.json                  # Expo configuration
 ├── package.json              # Dependencies
@@ -172,7 +172,7 @@ Check the Expo documentation: https://docs.expo.dev/
 ## Features to Add Next
 
 - User authentication
-- Cattle registration and tracking
+- Live Stock registration and tracking
 - Health records management
 - Quarantine period tracking
 - Notifications and reminders

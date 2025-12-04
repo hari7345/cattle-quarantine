@@ -1,10 +1,10 @@
-# Cattle RFID Scanning & Form Flow
+# Live Stock RFID Scanning & Form Flow
 
 ## Complete User Journey
 
 ### Step 1: Dashboard → Scan RFID
 
-1. User taps "Add Your Cattle" button on Dashboard
+1. User taps "Add Your Live Stock" button on Dashboard
 2. Navigates to RFIDScanner screen
 
 ### Step 2: RFID Scanner
@@ -20,9 +20,9 @@
 
 - Success modal displays briefly (1.5 seconds)
 - Shows scanned RFID tag data
-- Automatically navigates to CattleDetailsForm
+- Automatically navigates to Live StockDetailsForm
 
-### Step 4: Cattle Details Form
+### Step 4: Live Stock Details Form
 
 - Beautiful form pre-filled with data from RFID
 - Green badge at top indicating "Data Fetched from RFID"
@@ -84,7 +84,7 @@
 - ✓ **Cancel Button**: Returns to Dashboard
 - ✓ **Save Button**:
   - Shows success modal
-  - Saves cattle details
+  - Saves Live Stock details
   - Returns to Dashboard after 2 seconds
 
 ### Keyboard Handling
@@ -97,10 +97,10 @@
 
 ```
 Dashboard
-  ↓ (Tap "Add Your Cattle")
+  ↓ (Tap "Add Your Live Stock")
 RFIDScanner
   ↓ (Scan successful - 1.5s delay)
-CattleDetailsForm
+Live StockDetailsForm
   ↓ (Save or Cancel)
 Dashboard
 ```
@@ -129,7 +129,7 @@ The form demonstrates with realistic mock data:
 ### Files Created/Modified
 
 1. **screens/RFIDScanner.js** - Camera scanning interface
-2. **screens/CattleDetailsForm.js** - Comprehensive data form
+2. **screens/Live StockDetailsForm.js** - Comprehensive data form
 3. **App.js** - Added navigation routes
 4. **package.json** - Added expo-camera dependency
 

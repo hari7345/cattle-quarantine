@@ -1,17 +1,17 @@
 {
   "expo": {
-    "name": "cattle-quarantine-app",
-    "slug": "cattle-quarantine-app",
+    "name": "Live Stock-quarantine-app",
+    "slug": "Live Stock-quarantine-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.cattlequarantine.app"
+      "bundleIdentifier": "com.Live Stockquarantine.app"
     },
     "android": {
-      "package": "com.cattlequarantine.app"
+      "package": "com.Live Stockquarantine.app"
     }
   }
 }

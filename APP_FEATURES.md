@@ -1,4 +1,4 @@
-# Cattle Quarantine App - Features & Design
+# Live Stock Quarantine App - Features & Design
 
 ## Welcome Screen Design
 
@@ -145,8 +145,8 @@ The app uses `Dimensions.get('window')` to adapt to different screen sizes:
 ### Additional Screens to Build
 
 - Login/Registration
-- Dashboard with cattle overview
-- Individual cattle profiles
+- Dashboard with Live Stock overview
+- Individual Live Stock profiles
 - Health tracking
 - Quarantine management
 - Notifications

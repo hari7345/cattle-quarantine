@@ -1,6 +1,6 @@
-# Cattle Quarantine App
+# Live Stock Quarantine App
 
-A React Native mobile application built with Expo for farm management and cattle health tracking.
+A React Native mobile application built with Expo for farm management and Live Stock health tracking.
 
 ## Features
 
@@ -43,7 +43,7 @@ A React Native mobile application built with Expo for farm management and cattle
 ## Project Structure
 
 ```
-cattle-quarantine-app/
+Live Stock-quarantine-app/
 ├── App.js              # Main app component with welcome screen
 ├── assets/             # Images and static resources
 ├── app.json            # Expo configuration
@@ -69,7 +69,7 @@ All styles are defined in `App.js` using StyleSheet. You can customize:
 ## Next Steps
 
 - Add navigation (React Navigation)
-- Create additional screens for cattle management
+- Create additional screens for Live Stock management
 - Implement authentication
 - Add data persistence
 - Connect to backend API

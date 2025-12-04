@@ -54,13 +54,12 @@ export default function InitialPage({ navigation }) {
 
         {/* Text Content */}
         <View style={styles.textContainer}>
-          <Text style={styles.title}>
-            Cattle Quarantine{"\n"}Management System
-          </Text>
+          <Text style={styles.title}>SOM Quarantine</Text>
           <Text style={styles.subtitle}>
-            Monitor and manage cattle quarantine protocols efficiently with
+            Monitor and manage Live Stock quarantine protocols efficiently with
             comprehensive tracking and real-time health monitoring.
           </Text>
+          {/* <Text style={styles.companyCredit}>by SOM Quarantine</Text> */}
         </View>
 
         {/* Sign In Button */}
@@ -229,6 +228,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 22,
     paddingHorizontal: 10,
+  },
+  companyCredit: {
+    fontSize: 14,
+    color: "#1a5f3a",
+    textAlign: "center",
+    fontWeight: "600",
+    marginTop: 12,
+    letterSpacing: 0.3,
   },
   button: {
     width: "100%",

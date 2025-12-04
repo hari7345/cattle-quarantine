@@ -115,12 +115,15 @@ export default function Profile({ navigation }) {
             <Text style={styles.navItemLabel}>Home</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.navItem}>
-            <Text style={styles.navItemIcon}>📋</Text>
-            <Text style={styles.navItemLabel}>Tasks</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem}>
             <Text style={styles.navItemIcon}>📊</Text>
             <Text style={styles.navItemLabel}>Statistic</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.navItem}
+            onPress={() => navigation.navigate("RFIDScanner")}
+          >
+            <Text style={styles.navItemIcon}>📋</Text>
+            <Text style={styles.navItemLabel}>Scanner</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.navItem}>
             <Text style={styles.navItemIconActive}>👤</Text>

@@ -19,7 +19,7 @@ import { LinearGradient } from "expo-linear-gradient";
 
 const { width } = Dimensions.get("window");
 
-export default function CattleDetailsForm({ route, navigation }) {
+export default function Live StockDetailsForm({ route, navigation }) {
   const { rfidData } = route.params || {};
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
@@ -188,11 +188,11 @@ export default function CattleDetailsForm({ route, navigation }) {
               <Text style={styles.headerIcon}>←</Text>
             </View>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Cattle Details</Text>
+          <Text style={styles.headerTitle}>Live Stock Details</Text>
           <TouchableOpacity style={styles.headerButton}>
-            <View style={styles.headerIconCircle}>
+            {/* <View style={styles.headerIconCircle}>
               <Text style={styles.headerIcon}>↗</Text>
-            </View>
+            </View> */}
           </TouchableOpacity>
         </View>
 
@@ -349,7 +349,7 @@ export default function CattleDetailsForm({ route, navigation }) {
                 onPress={handleSave}
                 activeOpacity={0.8}
               >
-                <Text style={styles.saveButtonText}>Save Cattle Details</Text>
+                <Text style={styles.saveButtonText}>Save Live Stock Details</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -373,7 +373,7 @@ export default function CattleDetailsForm({ route, navigation }) {
                 </View>
                 <Text style={styles.successTitle}>Success!</Text>
                 <Text style={styles.successSubtitle}>
-                  Cattle details saved successfully
+                  Live Stock details saved successfully
                 </Text>
               </LinearGradient>
             </Animated.View>

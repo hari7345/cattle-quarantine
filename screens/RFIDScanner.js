@@ -153,7 +153,7 @@ export default function RFIDScanner({ navigation }) {
     // Navigate to form after showing success message
     setTimeout(() => {
       setShowSuccess(false);
-      navigation.navigate("CattleDetailsForm", { rfidData: simulatedRFID });
+      navigation.navigate("Live StockDetailsForm", { rfidData: simulatedRFID });
     }, 1800);
   };
 

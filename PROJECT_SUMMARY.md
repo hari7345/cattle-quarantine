@@ -1,4 +1,4 @@
-# Project Summary - Cattle Quarantine App
+# Project Summary - Live Stock Quarantine App
 
 ## ✅ What Has Been Created
 
@@ -20,7 +20,7 @@ A complete **Expo React Native application** with a beautiful welcome screen mat
 ## 🗂️ Project Structure
 
 ```
-cattle-quarantine-app/
+Live Stock-quarantine-app/
 ├── App.js                      ⭐ Main app component (welcome screen)
 ├── package.json                📦 Dependencies and scripts
 ├── app.json                    ⚙️ Expo configuration
@@ -159,8 +159,8 @@ npm run web      # Web Browser
 2. Create additional screens:
    - Login/Registration
    - Dashboard
-   - Cattle list
-   - Cattle details
+   - Live Stock list
+   - Live Stock details
    - Health records
    - Quarantine tracking
 3. Add state management (Redux/Context)
@@ -254,7 +254,7 @@ For issues or questions:
 
 ## 🎊 Congratulations!
 
-Your Cattle Quarantine App is ready to run!
+Your Live Stock Quarantine App is ready to run!
 
 **To see it in action:**
 

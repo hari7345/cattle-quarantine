@@ -1,4 +1,4 @@
-# Troubleshooting Guide - Cattle Quarantine App
+# Troubleshooting Guide - Live Stock Quarantine App
 
 ## Common Issues and Solutions
 

@@ -6,7 +6,7 @@ import LoginForm from "./screens/LoginForm";
 import Dashboard from "./screens/Dashboard";
 import Profile from "./screens/Profile";
 import RFIDScanner from "./screens/RFIDScanner";
-import CattleDetailsForm from "./screens/CattleDetailsForm";
+import Live StockDetailsForm from "./screens/Live StockDetailsForm";
 
 const Stack = createNativeStackNavigator();
 
@@ -23,7 +23,7 @@ export default function App() {
         <Stack.Screen name="Dashboard" component={Dashboard} />
         <Stack.Screen name="Profile" component={Profile} />
         <Stack.Screen name="RFIDScanner" component={RFIDScanner} />
-        <Stack.Screen name="CattleDetailsForm" component={CattleDetailsForm} />
+        <Stack.Screen name="Live StockDetailsForm" component={Live StockDetailsForm} />
       </Stack.Navigator>
     </NavigationContainer>
   );
