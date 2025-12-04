@@ -19,7 +19,7 @@ import { LinearGradient } from "expo-linear-gradient";
 
 const { width } = Dimensions.get("window");
 
-export default function Live StockDetailsForm({ route, navigation }) {
+export default function LiveStockDetailsForm({ route, navigation }) {
   const { rfidData } = route.params || {};
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
@@ -349,7 +349,9 @@ export default function Live StockDetailsForm({ route, navigation }) {
                 onPress={handleSave}
                 activeOpacity={0.8}
               >
-                <Text style={styles.saveButtonText}>Save Live Stock Details</Text>
+                <Text style={styles.saveButtonText}>
+                  Save Live Stock Details
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
