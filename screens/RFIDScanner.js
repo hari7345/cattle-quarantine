@@ -16,7 +16,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import Rfid from "../assets/images/rfid.png";
 const { width, height } = Dimensions.get("window");
 
-export default function RFIDScanner({ navigation }) {
+export default function RFIDScanner({ navigation, route }) {
+  // Check if we're in read-only mode (coming from InitialPage for public viewing)
+  const readOnly = route?.params?.readOnly || false;
   const [isScanning, setIsScanning] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [rfidData, setRfidData] = useState("");
@@ -150,10 +152,44 @@ export default function RFIDScanner({ navigation }) {
 
     setShowSuccess(true);
 
-    // Navigate to form after showing success message
+    // Navigate after showing success message
     setTimeout(() => {
       setShowSuccess(false);
-      navigation.navigate("Live StockDetailsForm", { rfidData: simulatedRFID });
+      if (readOnly) {
+        // In read-only mode, navigate to CattleDetails to view (not edit)
+        // In production, you would fetch the cattle data using the RFID tag
+        const sampleCattleData = {
+          id: "#890",
+          name: "Twilight",
+          price: "1.2 Lakhs",
+          image: require("../assets/images/initial.png"),
+          rfidTag: simulatedRFID,
+          breed: "Holstein Friesian",
+          ageYears: "3",
+          ageMonths: "6",
+          gender: "Male",
+          colour: "Black and White",
+          weight: "450 Kg",
+          height: "145 cm",
+          distinguishingMarks: "Small white patch on left shoulder",
+          shedNumber: "A-12",
+          arrivalDate: "2024-12-01",
+          arrivalTime: "10:30 AM",
+          vaccinationStatus: "Up to date",
+          dewormingDate: "2024-11-15",
+          temperature: "38.5°C",
+          lastCheckupDate: "2024-11-20",
+          behavior: "Calm",
+          reproductiveStatus: "Healthy",
+          note: "Animal is in good health and has completed quarantine protocol successfully.",
+        };
+        navigation.navigate("CattleDetails", { cattle: sampleCattleData });
+      } else {
+        // In edit mode, navigate to the form
+        navigation.navigate("Live StockDetailsForm", {
+          rfidData: simulatedRFID,
+        });
+      }
     }, 1800);
   };
 

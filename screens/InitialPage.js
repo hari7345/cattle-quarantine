@@ -18,8 +18,9 @@ export default function InitialPage({ navigation }) {
   };
 
   const handleScanQR = () => {
-    console.log("Scan QR pressed");
-    // Add QR scanning logic here
+    console.log("Scan RFID pressed - read-only mode");
+    // Navigate to RFID scanner in read-only mode (user can only view details, not edit)
+    navigation.navigate("RFIDScanner", { readOnly: true });
   };
 
   return (
