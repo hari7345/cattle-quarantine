@@ -7,6 +7,8 @@ import Dashboard from "./screens/Dashboard";
 import Profile from "./screens/Profile";
 import RFIDScanner from "./screens/RFIDScanner";
 import LiveStockDetailsForm from "./screens/CattleDetailsForm";
+import CattleLists from "./screens/CattleLists";
+import CattleDetails from "./screens/CattleDetails";
 
 const Stack = createNativeStackNavigator();
 
@@ -27,6 +29,8 @@ export default function App() {
           name="Live StockDetailsForm"
           component={LiveStockDetailsForm}
         />
+        <Stack.Screen name="CattleLists" component={CattleLists} />
+        <Stack.Screen name="CattleDetails" component={CattleDetails} />
       </Stack.Navigator>
     </NavigationContainer>
   );

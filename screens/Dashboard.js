@@ -80,7 +80,7 @@ export default function Dashboard({ navigation }) {
   };
 
   const navigationCards = [
-    { title: "My Live Stock", icon: "🐄", route: "MyLive Stock" },
+    { title: "View Registry", icon: "🐄", route: "CattleLists" },
     { title: "Health & Medical Record", icon: "🩺", route: "HealthRecords" },
     {
       title: "Under Observation Live Stocks",
@@ -91,7 +91,7 @@ export default function Dashboard({ navigation }) {
 
   const handleCardPress = (route) => {
     console.log(`Navigating to ${route}`);
-    // navigation.navigate(route);
+    navigation.navigate(route);
   };
 
   return (
