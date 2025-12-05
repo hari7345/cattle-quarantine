@@ -108,18 +108,44 @@ export default function Dashboard({ navigation }) {
             colors={["#1a5f3a", "#2d7a4f", "#3d8f5f"]}
             style={styles.topSection}
           >
+            {/* Decorative Background Patterns */}
+            <View style={styles.bgPatternContainer}>
+              {/* Large organic blob shapes */}
+              <View style={styles.bgBlob1} />
+              <View style={styles.bgBlob2} />
+              <View style={styles.bgBlob3} />
+
+              {/* Dotted pattern grid */}
+              <View style={styles.dotsPattern}>
+                {[...Array(5)].map((_, rowIdx) => (
+                  <View key={rowIdx} style={styles.dotRow}>
+                    {[...Array(8)].map((_, colIdx) => (
+                      <View key={colIdx} style={styles.dot} />
+                    ))}
+                  </View>
+                ))}
+              </View>
+
+              {/* Curved decorative lines */}
+              <View style={styles.curvedLine1} />
+              <View style={styles.curvedLine2} />
+
+              {/* Floating hexagon shapes */}
+              <View style={styles.hexShape1} />
+              <View style={styles.hexShape2} />
+              <View style={styles.hexShape3} />
+
+              {/* Diamond accents */}
+              <View style={styles.diamond1} />
+              <View style={styles.diamond2} />
+            </View>
+
             {/* Header Section */}
             <View style={styles.header}>
               <View>
                 <Text style={styles.greeting}>Hello, {getGreeting()}</Text>
                 <Text style={styles.date}>{formatDate(currentDate)}</Text>
               </View>
-              {/* <TouchableOpacity style={styles.notificationButton}>
-                <View style={styles.notificationBadge}>
-                  <Text style={styles.notificationCount}>3</Text>
-                </View>
-                <Text style={styles.notificationIcon}>🔔</Text>
-              </TouchableOpacity> */}
             </View>
           </LinearGradient>
 
@@ -177,22 +203,6 @@ export default function Dashboard({ navigation }) {
                   <Text style={styles.bubbleValue}>23m/s</Text>
                 </View>
               </ScrollView>
-
-              {/* <View style={styles.sunTimes}>
-                <View style={styles.sunTimeItem}>
-                  <Text style={styles.sunTimeValue}>5:25 am</Text>
-                  <Text style={styles.sunTimeLabel}>Sunrise</Text>
-                </View>
-                <View style={styles.sunPath}>
-                  <View style={styles.sunPathArc}>
-                    <Text style={styles.sunIcon}>☀️</Text>
-                  </View>
-                </View>
-                <View style={styles.sunTimeItem}>
-                  <Text style={styles.sunTimeValue}>8:04 pm</Text>
-                  <Text style={styles.sunTimeLabel}>Sunset</Text>
-                </View>
-              </View> */}
             </View>
           </Animated.View>
 
@@ -203,6 +213,23 @@ export default function Dashboard({ navigation }) {
             <View style={styles.patternCircle2} />
             <View style={styles.patternCircle3} />
             <View style={styles.patternCircle4} />
+
+            {/* Additional organic patterns */}
+            <View style={styles.patternRing1} />
+            <View style={styles.patternRing2} />
+            <View style={styles.patternDiamond1} />
+            <View style={styles.patternDiamond2} />
+
+            {/* Subtle dot grid */}
+            <View style={styles.whiteSectionDots}>
+              {[...Array(3)].map((_, rowIdx) => (
+                <View key={rowIdx} style={styles.whiteDotRow}>
+                  {[...Array(6)].map((_, colIdx) => (
+                    <View key={colIdx} style={styles.whiteDot} />
+                  ))}
+                </View>
+              ))}
+            </View>
             {/* Navigation Cards Grid */}
             <View style={styles.cardsGrid}>
               {navigationCards.map((card, index) => (
@@ -328,6 +355,135 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
+    overflow: "hidden",
+  },
+  bgPatternContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    overflow: "hidden",
+  },
+  // Organic blob shapes
+  bgBlob1: {
+    position: "absolute",
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    backgroundColor: "rgba(255, 255, 255, 0.04)",
+    top: -80,
+    right: -60,
+  },
+  bgBlob2: {
+    position: "absolute",
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    top: 40,
+    left: -50,
+  },
+  bgBlob3: {
+    position: "absolute",
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    bottom: 20,
+    right: 80,
+  },
+  // Dotted pattern
+  dotsPattern: {
+    position: "absolute",
+    top: 30,
+    right: 20,
+    opacity: 0.3,
+  },
+  dotRow: {
+    flexDirection: "row",
+    marginBottom: 12,
+  },
+  dot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: "rgba(255, 255, 255, 0.4)",
+    marginHorizontal: 8,
+  },
+  // Curved decorative lines
+  curvedLine1: {
+    position: "absolute",
+    width: 300,
+    height: 300,
+    borderRadius: 150,
+    borderWidth: 1.5,
+    borderColor: "rgba(255, 255, 255, 0.08)",
+    borderStyle: "dashed",
+    top: -150,
+    left: -100,
+  },
+  curvedLine2: {
+    position: "absolute",
+    width: 250,
+    height: 250,
+    borderRadius: 125,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.06)",
+    bottom: -100,
+    right: -80,
+  },
+  // Hexagon-like shapes (using rotated squares)
+  hexShape1: {
+    position: "absolute",
+    width: 30,
+    height: 30,
+    backgroundColor: "rgba(255, 255, 255, 0.08)",
+    top: 80,
+    right: 40,
+    transform: [{ rotate: "45deg" }],
+    borderRadius: 6,
+  },
+  hexShape2: {
+    position: "absolute",
+    width: 20,
+    height: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.06)",
+    top: 30,
+    left: 80,
+    transform: [{ rotate: "45deg" }],
+    borderRadius: 4,
+  },
+  hexShape3: {
+    position: "absolute",
+    width: 25,
+    height: 25,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    bottom: 40,
+    left: 120,
+    transform: [{ rotate: "45deg" }],
+    borderRadius: 5,
+  },
+  // Diamond accents
+  diamond1: {
+    position: "absolute",
+    width: 16,
+    height: 16,
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.15)",
+    top: 60,
+    right: 120,
+    transform: [{ rotate: "45deg" }],
+  },
+  diamond2: {
+    position: "absolute",
+    width: 12,
+    height: 12,
+    borderWidth: 1.5,
+    borderColor: "rgba(255, 255, 255, 0.12)",
+    bottom: 60,
+    left: 60,
+    transform: [{ rotate: "45deg" }],
   },
   whiteSection: {
     backgroundColor: "#f5f6fa",
@@ -373,6 +529,67 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(26, 95, 58, 0.03)",
     bottom: 50,
     right: 30,
+  },
+  // Ring patterns
+  patternRing1: {
+    position: "absolute",
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    borderWidth: 2,
+    borderColor: "rgba(26, 95, 58, 0.05)",
+    borderStyle: "dashed",
+    top: 250,
+    right: -60,
+  },
+  patternRing2: {
+    position: "absolute",
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    borderWidth: 1.5,
+    borderColor: "rgba(26, 95, 58, 0.04)",
+    bottom: 150,
+    left: -40,
+  },
+  // Diamond patterns in white section
+  patternDiamond1: {
+    position: "absolute",
+    width: 24,
+    height: 24,
+    backgroundColor: "rgba(26, 95, 58, 0.04)",
+    top: 180,
+    left: 30,
+    transform: [{ rotate: "45deg" }],
+    borderRadius: 4,
+  },
+  patternDiamond2: {
+    position: "absolute",
+    width: 18,
+    height: 18,
+    borderWidth: 2,
+    borderColor: "rgba(26, 95, 58, 0.06)",
+    bottom: 280,
+    right: 50,
+    transform: [{ rotate: "45deg" }],
+  },
+  // Dot grid for white section
+  whiteSectionDots: {
+    position: "absolute",
+    bottom: 100,
+    left: 20,
+    opacity: 0.5,
+  },
+  whiteDotRow: {
+    flexDirection: "row",
+    marginBottom: 16,
+  },
+  whiteDot: {
+    width: 3,
+    height: 3,
+    borderRadius: 1.5,
+    backgroundColor: "rgba(26, 95, 58, 0.1)",
+    marginHorizontal: 12,
   },
   header: {
     flexDirection: "row",
