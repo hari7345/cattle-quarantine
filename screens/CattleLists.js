@@ -298,16 +298,6 @@ export default function CattleLists({ navigation }) {
                   {cattle.description}
                 </Text>
               </View>
-
-              {/* Favorite Button */}
-              <TouchableOpacity
-                style={styles.favoriteButton}
-                onPress={() => toggleFavorite(cattle.id)}
-              >
-                <Text style={styles.favoriteIcon}>
-                  {favorites.includes(cattle.id) ? "❤️" : "🤍"}
-                </Text>
-              </TouchableOpacity>
             </TouchableOpacity>
           ))}
         </ScrollView>
