@@ -7,9 +7,9 @@ import {
   Dimensions,
   SafeAreaView,
   Animated,
-  Modal,
   Vibration,
   Image,
+  TextInput,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
@@ -21,18 +21,18 @@ export default function RFIDScanner({ navigation, route }) {
   const readOnly = route?.params?.readOnly || false;
   // Mode can be 'add' (add new cattle) or 'view' (view/edit existing cattle)
   const mode = route?.params?.mode || "view";
-  const [isScanning, setIsScanning] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [isScanning, setIsScanning] = useState(true); // Start scanning immediately
+  const [scanComplete, setScanComplete] = useState(false);
   const [rfidData, setRfidData] = useState("");
 
   // Animation values
   const scanLineAnim = useRef(new Animated.Value(0)).current;
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const cornerAnim = useRef(new Animated.Value(0)).current;
-  const successAnim = useRef(new Animated.Value(0)).current;
   const waveAnim = useRef(new Animated.Value(0)).current;
   const iconPulseAnim = useRef(new Animated.Value(1)).current;
 
+  // Auto-start scanning on component mount
   useEffect(() => {
     // Icon pulsating animation (always running)
     Animated.loop(
@@ -49,6 +49,13 @@ export default function RFIDScanner({ navigation, route }) {
         }),
       ])
     ).start();
+
+    // Auto-start scanning - simulate RFID detection after 2.5 seconds
+    const scanTimer = setTimeout(() => {
+      handleRFIDDetected();
+    }, 2500);
+
+    return () => clearTimeout(scanTimer);
   }, []);
 
   useEffect(() => {
@@ -119,89 +126,68 @@ export default function RFIDScanner({ navigation, route }) {
     }
   }, [isScanning]);
 
-  useEffect(() => {
-    if (showSuccess) {
-      Animated.spring(successAnim, {
-        toValue: 1,
-        friction: 5,
-        tension: 40,
-        useNativeDriver: true,
-      }).start();
-    } else {
-      successAnim.setValue(0);
-    }
-  }, [showSuccess]);
-
-  const startScanning = () => {
-    setIsScanning(true);
-
-    // Simulate RFID detection after 2-3 seconds
-    // In production, this would be replaced with actual RFID reader integration
-    setTimeout(() => {
-      handleRFIDDetected();
-    }, 2500);
-  };
-
   const handleRFIDDetected = () => {
     // Generate a simulated RFID tag (in production, this comes from RFID reader)
     const simulatedRFID = `RFID-${Date.now().toString().slice(-8)}`;
 
     setIsScanning(false);
     setRfidData(simulatedRFID);
+    setScanComplete(true);
 
     // Vibrate on successful scan (pattern: short-pause-short-pause-long)
     Vibration.vibrate([0, 100, 50, 100, 50, 200]);
 
-    setShowSuccess(true);
-
-    // Navigate after showing success message
+    // Auto-navigate to details after 2 seconds
     setTimeout(() => {
-      setShowSuccess(false);
+      navigateToDetails(simulatedRFID);
+    }, 2000);
+  };
 
-      if (mode === "add") {
-        // Add mode: Navigate to form for adding new cattle
-        navigation.navigate("Live StockDetailsForm", {
-          rfidData: simulatedRFID,
-        });
-      } else {
-        // View mode: Navigate to CattleDetails to view/edit existing cattle
-        // In production, you would fetch the cattle data using the RFID tag
-        const sampleCattleData = {
-          id: "#890",
-          name: "Twilight",
-          price: "1.2 Lakhs",
-          image: require("../assets/images/initial.png"),
-          rfidTag: simulatedRFID,
-          breed: "Holstein Friesian",
-          ageYears: "3",
-          ageMonths: "6",
-          gender: "Male",
-          colour: "Black and White",
-          weight: "450 Kg",
-          height: "145 cm",
-          distinguishingMarks: "Small white patch on left shoulder",
-          shedNumber: "A-12",
-          arrivalDate: "2024-12-01",
-          arrivalTime: "10:30 AM",
-          vaccinationStatus: "Up to date",
-          dewormingDate: "2024-11-15",
-          temperature: "38.5°C",
-          lastCheckupDate: "2024-11-20",
-          behavior: "Calm",
-          reproductiveStatus: "Healthy",
-          note: "Animal is in good health and has completed quarantine protocol successfully.",
-        };
-        // readOnly determines if user can edit
-        navigation.navigate("CattleDetails", {
-          cattle: sampleCattleData,
-          readOnly: readOnly,
-        });
-      }
-    }, 1800);
+  const navigateToDetails = (rfid) => {
+    if (mode === "add") {
+      // Add mode: Navigate to form for adding new cattle
+      navigation.navigate("Live StockDetailsForm", {
+        rfidData: rfid,
+      });
+    } else {
+      // View mode: Navigate to CattleDetails to view/edit existing cattle
+      // In production, you would fetch the cattle data using the RFID tag
+      const sampleCattleData = {
+        id: "#890",
+        name: "Twilight",
+        price: "1.2 Lakhs",
+        image: require("../assets/images/initial.png"),
+        rfidTag: rfid,
+        breed: "Holstein Friesian",
+        ageYears: "3",
+        ageMonths: "6",
+        gender: "Male",
+        colour: "Black and White",
+        weight: "450 Kg",
+        height: "145 cm",
+        distinguishingMarks: "Small white patch on left shoulder",
+        shedNumber: "A-12",
+        arrivalDate: "2024-12-01",
+        arrivalTime: "10:30 AM",
+        vaccinationStatus: "Up to date",
+        dewormingDate: "2024-11-15",
+        temperature: "38.5°C",
+        lastCheckupDate: "2024-11-20",
+        behavior: "Calm",
+        reproductiveStatus: "Healthy",
+        note: "Animal is in good health and has completed quarantine protocol successfully.",
+      };
+      // readOnly determines if user can edit
+      navigation.navigate("CattleDetails", {
+        cattle: sampleCattleData,
+        readOnly: readOnly,
+      });
+    }
   };
 
   const cancelScanning = () => {
     setIsScanning(false);
+    navigation.goBack();
   };
 
   const scanLineTranslateY = scanLineAnim.interpolate({
@@ -249,14 +235,20 @@ export default function RFIDScanner({ navigation, route }) {
             {/* Instructions */}
             <View style={styles.instructionContainer}>
               <Text style={styles.instructionText}>
-                {isScanning
-                  ? "Hold device near RFID tag..."
-                  : "Tap button below to scan RFID tag"}
+                {scanComplete
+                  ? "RFID Tag Detected!"
+                  : "Hold device near RFID tag..."}
               </Text>
               {isScanning && (
                 <View style={styles.statusBadge}>
                   <View style={styles.statusDot} />
                   <Text style={styles.statusText}>Scanning...</Text>
+                </View>
+              )}
+              {scanComplete && (
+                <View style={[styles.statusBadge, styles.successBadge]}>
+                  <Text style={styles.successCheckmark}>✓</Text>
+                  <Text style={styles.statusText}>Scan Complete</Text>
                 </View>
               )}
             </View>
@@ -382,85 +374,48 @@ export default function RFIDScanner({ navigation, route }) {
 
             {/* Bottom Info and Button */}
             <View style={styles.infoContainer}>
-              <View style={styles.infoCard}>
-                {/* <Text style={styles.infoTitle}>📡 RFID Technology</Text> */}
-                <Text style={styles.infoText}>
-                  Hold your device close to the RFID tag.
-                </Text>
-              </View>
+              {scanComplete ? (
+                <>
+                  {/* RFID Input Box */}
+                  <View style={styles.rfidInputContainer}>
+                    <Text style={styles.rfidInputLabel}>RFID Tag Number</Text>
+                    <TextInput
+                      style={styles.rfidInput}
+                      value={rfidData}
+                      editable={false}
+                      placeholder="RFID Number"
+                      placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                    />
+                  </View>
 
-              {/* Scan Button */}
-              {!isScanning ? (
-                <TouchableOpacity
-                  style={styles.scanButton}
-                  onPress={startScanning}
-                  activeOpacity={0.8}
-                >
-                  <LinearGradient
-                    colors={["#16a085", "#1abc9c", "#2ecc71"]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.scanButtonGradient}
-                  >
-                    <Text style={styles.scanButtonText}>Start Scanning</Text>
-                    {/* <Text style={styles.scanButtonIcon}>📡</Text> */}
-                  </LinearGradient>
-                </TouchableOpacity>
+                  {/* Auto-redirect message */}
+                  <View style={styles.redirectingContainer}>
+                    <Text style={styles.redirectingText}>
+                      Loading details...
+                    </Text>
+                  </View>
+                </>
               ) : (
-                <TouchableOpacity
-                  style={styles.cancelButton}
-                  onPress={cancelScanning}
-                  activeOpacity={0.8}
-                >
-                  <Text style={styles.cancelButtonText}>Cancel</Text>
-                </TouchableOpacity>
+                <>
+                  <View style={styles.infoCard}>
+                    <Text style={styles.infoText}>
+                      Hold your device close to the RFID tag.
+                    </Text>
+                  </View>
+
+                  {/* Cancel Button while scanning */}
+                  <TouchableOpacity
+                    style={styles.cancelButton}
+                    onPress={cancelScanning}
+                    activeOpacity={0.8}
+                  >
+                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                  </TouchableOpacity>
+                </>
               )}
             </View>
           </View>
         </View>
-
-        {/* Success Modal */}
-        <Modal
-          transparent
-          visible={showSuccess}
-          animationType="none"
-          onRequestClose={() => setShowSuccess(false)}
-        >
-          <View style={styles.successOverlay}>
-            <Animated.View
-              style={[
-                styles.successCard,
-                {
-                  transform: [
-                    { scale: successAnim },
-                    {
-                      translateY: successAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [50, 0],
-                      }),
-                    },
-                  ],
-                  opacity: successAnim,
-                },
-              ]}
-            >
-              <LinearGradient
-                colors={["#16a085", "#1abc9c", "#2ecc71"]}
-                style={styles.successGradient}
-              >
-                <View style={styles.successIconContainer}>
-                  <Text style={styles.successIcon}>✓</Text>
-                </View>
-                <Text style={styles.successTitle}>Scan Successful!</Text>
-                <Text style={styles.successSubtitle}>RFID Tag Detected</Text>
-                <View style={styles.successDataContainer}>
-                  <Text style={styles.successDataLabel}>Tag ID:</Text>
-                  <Text style={styles.successDataValue}>{rfidData}</Text>
-                </View>
-              </LinearGradient>
-            </Animated.View>
-          </View>
-        </Modal>
       </LinearGradient>
     </SafeAreaView>
   );
@@ -549,6 +504,15 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: "#ffffff",
     fontWeight: "700",
+  },
+  successBadge: {
+    backgroundColor: "rgba(39, 174, 96, 0.95)",
+  },
+  successCheckmark: {
+    fontSize: 14,
+    color: "#ffffff",
+    fontWeight: "700",
+    marginRight: 8,
   },
   frameContainer: {
     width: 280,
@@ -706,73 +670,40 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#ffffff",
   },
-  successOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.8)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  successCard: {
-    width: width - 80,
-    borderRadius: 24,
-    overflow: "hidden",
-    elevation: 10,
-    shadowColor: "#2ecc71",
-    shadowOffset: {
-      width: 0,
-      height: 8,
-    },
-    shadowOpacity: 0.4,
-    shadowRadius: 16,
-  },
-  successGradient: {
-    padding: 32,
-    alignItems: "center",
-  },
-  successIconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 20,
-    borderWidth: 4,
-    borderColor: "rgba(255, 255, 255, 0.5)",
-  },
-  successIcon: {
-    fontSize: 48,
-    color: "#ffffff",
-    fontWeight: "700",
-  },
-  successTitle: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#ffffff",
+  rfidInputContainer: {
+    width: "100%",
+    maxWidth: 340,
     marginBottom: 8,
   },
-  successSubtitle: {
+  rfidInputLabel: {
     fontSize: 14,
-    color: "rgba(255, 255, 255, 0.9)",
-    marginBottom: 24,
+    fontWeight: "600",
+    color: "#ffffff",
+    marginBottom: 8,
+    textShadowColor: "rgba(0, 0, 0, 0.8)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
-  successDataContainer: {
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+  rfidInput: {
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
     borderRadius: 12,
-    width: "100%",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.3)",
-  },
-  successDataLabel: {
-    fontSize: 12,
-    color: "rgba(255, 255, 255, 0.8)",
-    marginBottom: 4,
-  },
-  successDataValue: {
-    fontSize: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    fontSize: 18,
     fontWeight: "700",
     color: "#ffffff",
+    borderWidth: 2,
+    borderColor: "rgba(46, 204, 113, 0.8)",
+    textAlign: "center",
+  },
+  redirectingContainer: {
+    alignItems: "center",
+    paddingVertical: 16,
+  },
+  redirectingText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "rgba(255, 255, 255, 0.8)",
+    fontStyle: "italic",
   },
 });
