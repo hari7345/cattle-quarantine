@@ -19,6 +19,8 @@ import HomeActive from "../assets/icons/homefilled.png";
 import Profile from "../assets/icons/profile.png";
 import ProfileActive from "../assets/icons/profilefilled.png";
 import Scanner from "../assets/icons/scanner.png";
+import Statistic from "../assets/icons/statistics.png";
+import StatisticActive from "../assets/icons/statisticsfilled.png";
 const { width, height } = Dimensions.get("window");
 
 export default function Dashboard({ navigation }) {
@@ -345,15 +347,13 @@ export default function Dashboard({ navigation }) {
             style={styles.navItem}
             onPress={() => setSelectedTab("Statistic")}
           >
-            <Text
-              style={
-                selectedTab === "Statistic"
-                  ? styles.navItemIconActive
-                  : styles.navItemIcon
-              }
-            >
-              📊
-            </Text>
+            <Image
+              source={selectedTab === "Statistic" ? StatisticActive : Statistic}
+              style={[
+                styles.navIcon,
+                selectedTab !== "Statistic" && styles.navIconInactive,
+              ]}
+            />
             <Text
               style={
                 selectedTab === "Statistic"
