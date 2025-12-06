@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -12,13 +12,27 @@ import {
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
+import { useFocusEffect } from "@react-navigation/native";
 import Location from "../assets/images/location.png";
+import Home from "../assets/icons/home.png";
+import HomeActive from "../assets/icons/homefilled.png";
+import Profile from "../assets/icons/profile.png";
+import ProfileActive from "../assets/icons/profilefilled.png";
+import Scanner from "../assets/icons/scanner.png";
 const { width, height } = Dimensions.get("window");
 
 export default function Dashboard({ navigation }) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [fadeAnim] = useState(new Animated.Value(0));
   const [scaleAnim] = useState(new Animated.Value(0.9));
+  const [selectedTab, setSelectedTab] = useState("Home");
+
+  // Reset selected tab to Home when Dashboard comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      setSelectedTab("Home");
+    }, [])
+  );
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -305,28 +319,107 @@ export default function Dashboard({ navigation }) {
 
         {/* Bottom Navigation */}
         <View style={styles.bottomNav}>
-          <TouchableOpacity style={styles.navItem}>
-            <Text style={styles.navItemIconActive}>🏠</Text>
-            <Text style={styles.navItemLabelActive}>Home</Text>
-            <View style={styles.activeIndicator} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem}>
-            <Text style={styles.navItemIcon}>📊</Text>
-            <Text style={styles.navItemLabel}>Statistic</Text>
+          <TouchableOpacity
+            style={styles.navItem}
+            onPress={() => setSelectedTab("Home")}
+          >
+            <Image
+              source={selectedTab === "Home" ? HomeActive : Home}
+              style={[
+                styles.navIcon,
+                selectedTab !== "Home" && styles.navIconInactive,
+              ]}
+            />
+            <Text
+              style={
+                selectedTab === "Home"
+                  ? styles.navItemLabelActive
+                  : styles.navItemLabel
+              }
+            >
+              Home
+            </Text>
+            {selectedTab === "Home" && <View style={styles.activeIndicator} />}
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.navItem}
-            onPress={() => navigation.navigate("RFIDScanner")}
+            onPress={() => setSelectedTab("Statistic")}
           >
-            <Text style={styles.navItemIcon}>📋</Text>
-            <Text style={styles.navItemLabel}>Scanner</Text>
+            <Text
+              style={
+                selectedTab === "Statistic"
+                  ? styles.navItemIconActive
+                  : styles.navItemIcon
+              }
+            >
+              📊
+            </Text>
+            <Text
+              style={
+                selectedTab === "Statistic"
+                  ? styles.navItemLabelActive
+                  : styles.navItemLabel
+              }
+            >
+              Statistic
+            </Text>
+            {selectedTab === "Statistic" && (
+              <View style={styles.activeIndicator} />
+            )}
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.navItem}
-            onPress={() => navigation.navigate("Profile")}
+            onPress={() => {
+              setSelectedTab("Scanner");
+              navigation.navigate("RFIDScanner");
+            }}
           >
-            <Text style={styles.navItemIcon}>👤</Text>
-            <Text style={styles.navItemLabel}>My Profile</Text>
+            <Image
+              source={Scanner}
+              style={[
+                styles.navIcon,
+                selectedTab !== "Scanner" && styles.navIconInactive,
+              ]}
+            />
+            <Text
+              style={
+                selectedTab === "Scanner"
+                  ? styles.navItemLabelActive
+                  : styles.navItemLabel
+              }
+            >
+              Scanner
+            </Text>
+            {selectedTab === "Scanner" && (
+              <View style={styles.activeIndicator} />
+            )}
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.navItem}
+            onPress={() => {
+              setSelectedTab("Profile");
+              navigation.navigate("Profile");
+            }}
+          >
+            <Image
+              source={selectedTab === "Profile" ? ProfileActive : Profile}
+              style={[
+                styles.navIcon,
+                selectedTab !== "Profile" && styles.navIconInactive,
+              ]}
+            />
+            <Text
+              style={
+                selectedTab === "Profile"
+                  ? styles.navItemLabelActive
+                  : styles.navItemLabel
+              }
+            >
+              My Profile
+            </Text>
+            {selectedTab === "Profile" && (
+              <View style={styles.activeIndicator} />
+            )}
           </TouchableOpacity>
         </View>
       </View>
@@ -985,6 +1078,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 10,
     position: "relative",
+  },
+  navIcon: {
+    width: 26,
+    height: 26,
+    marginBottom: 4,
+  },
+  navIconInactive: {
+    opacity: 0.4,
   },
   navItemIcon: {
     fontSize: 26,
