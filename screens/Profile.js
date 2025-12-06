@@ -18,6 +18,8 @@ import HomeActive from "../assets/icons/homefilled.png";
 import ProfileIcon from "../assets/icons/profile.png";
 import ProfileIconActive from "../assets/icons/profilefilled.png";
 import Scanner from "../assets/icons/scanner.png";
+import Statistic from "../assets/icons/statistics.png";
+import StatisticActive from "../assets/icons/statisticsfilled.png";
 
 export default function Profile({ navigation }) {
   const [selectedTab, setSelectedTab] = useState("Profile");
@@ -65,9 +67,41 @@ export default function Profile({ navigation }) {
         >
           {/* Header Section with Gradient */}
           <LinearGradient
-            colors={["#1a5f3a", "#2d7a4f"]}
+            colors={["#1a5f3a", "#2d7a4f", "#3d8f5f"]}
             style={styles.headerSection}
           >
+            {/* Decorative Background Patterns */}
+            <View style={styles.bgPatternContainer}>
+              {/* Large organic blob shapes */}
+              <View style={styles.bgBlob1} />
+              <View style={styles.bgBlob2} />
+              <View style={styles.bgBlob3} />
+
+              {/* Dotted pattern grid */}
+              <View style={styles.dotsPattern}>
+                {[...Array(5)].map((_, rowIdx) => (
+                  <View key={rowIdx} style={styles.dotRow}>
+                    {[...Array(8)].map((_, colIdx) => (
+                      <View key={colIdx} style={styles.dot} />
+                    ))}
+                  </View>
+                ))}
+              </View>
+
+              {/* Curved decorative lines */}
+              <View style={styles.curvedLine1} />
+              <View style={styles.curvedLine2} />
+
+              {/* Floating hexagon shapes */}
+              <View style={styles.hexShape1} />
+              <View style={styles.hexShape2} />
+              <View style={styles.hexShape3} />
+
+              {/* Diamond accents */}
+              <View style={styles.diamond1} />
+              <View style={styles.diamond2} />
+            </View>
+
             {/* Back Button */}
             <TouchableOpacity style={styles.backButton} onPress={handleBack}>
               <Text style={styles.backIcon}>←</Text>
@@ -93,6 +127,12 @@ export default function Profile({ navigation }) {
 
           {/* Menu Section */}
           <View style={styles.menuSection}>
+            {/* Decorative Pattern Elements */}
+            <View style={styles.patternCircle1} />
+            <View style={styles.patternCircle2} />
+            <View style={styles.patternRing1} />
+            <View style={styles.patternDiamond1} />
+
             {menuItems.map((item, index) => (
               <TouchableOpacity
                 key={item.id}
@@ -151,15 +191,13 @@ export default function Profile({ navigation }) {
             style={styles.navItem}
             onPress={() => setSelectedTab("Statistic")}
           >
-            <Text
-              style={
-                selectedTab === "Statistic"
-                  ? styles.navItemIconActive
-                  : styles.navItemIcon
-              }
-            >
-              📊
-            </Text>
+            <Image
+              source={selectedTab === "Statistic" ? StatisticActive : Statistic}
+              style={[
+                styles.navIcon,
+                selectedTab !== "Statistic" && styles.navIconInactive,
+              ]}
+            />
             <Text
               style={
                 selectedTab === "Statistic"
@@ -260,6 +298,135 @@ const styles = StyleSheet.create({
     paddingBottom: 60,
     alignItems: "center",
     position: "relative",
+    overflow: "hidden",
+  },
+  bgPatternContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    overflow: "hidden",
+  },
+  // Organic blob shapes
+  bgBlob1: {
+    position: "absolute",
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    backgroundColor: "rgba(255, 255, 255, 0.04)",
+    top: -80,
+    right: -60,
+  },
+  bgBlob2: {
+    position: "absolute",
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    top: 40,
+    left: -50,
+  },
+  bgBlob3: {
+    position: "absolute",
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    bottom: 20,
+    right: 80,
+  },
+  // Dotted pattern
+  dotsPattern: {
+    position: "absolute",
+    top: 30,
+    right: 20,
+    opacity: 0.3,
+  },
+  dotRow: {
+    flexDirection: "row",
+    marginBottom: 12,
+  },
+  dot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: "rgba(255, 255, 255, 0.4)",
+    marginHorizontal: 8,
+  },
+  // Curved decorative lines
+  curvedLine1: {
+    position: "absolute",
+    width: 300,
+    height: 300,
+    borderRadius: 150,
+    borderWidth: 1.5,
+    borderColor: "rgba(255, 255, 255, 0.08)",
+    borderStyle: "dashed",
+    top: -150,
+    left: -100,
+  },
+  curvedLine2: {
+    position: "absolute",
+    width: 250,
+    height: 250,
+    borderRadius: 125,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.06)",
+    bottom: -100,
+    right: -80,
+  },
+  // Hexagon-like shapes (using rotated squares)
+  hexShape1: {
+    position: "absolute",
+    width: 30,
+    height: 30,
+    backgroundColor: "rgba(255, 255, 255, 0.08)",
+    top: 80,
+    right: 40,
+    transform: [{ rotate: "45deg" }],
+    borderRadius: 6,
+  },
+  hexShape2: {
+    position: "absolute",
+    width: 20,
+    height: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.06)",
+    top: 30,
+    left: 80,
+    transform: [{ rotate: "45deg" }],
+    borderRadius: 4,
+  },
+  hexShape3: {
+    position: "absolute",
+    width: 25,
+    height: 25,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    bottom: 40,
+    left: 120,
+    transform: [{ rotate: "45deg" }],
+    borderRadius: 5,
+  },
+  // Diamond accents
+  diamond1: {
+    position: "absolute",
+    width: 16,
+    height: 16,
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.15)",
+    top: 60,
+    right: 120,
+    transform: [{ rotate: "45deg" }],
+  },
+  diamond2: {
+    position: "absolute",
+    width: 12,
+    height: 12,
+    borderWidth: 1.5,
+    borderColor: "rgba(255, 255, 255, 0.12)",
+    bottom: 60,
+    left: 60,
+    transform: [{ rotate: "45deg" }],
   },
   backButton: {
     position: "absolute",
@@ -358,6 +525,48 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.1,
     shadowRadius: 8,
+    position: "relative",
+    overflow: "hidden",
+  },
+  // Pattern elements for menu section
+  patternCircle1: {
+    position: "absolute",
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "rgba(26, 95, 58, 0.03)",
+    top: -20,
+    right: -20,
+  },
+  patternCircle2: {
+    position: "absolute",
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "rgba(26, 95, 58, 0.04)",
+    bottom: -15,
+    left: -15,
+  },
+  patternRing1: {
+    position: "absolute",
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderWidth: 1.5,
+    borderColor: "rgba(26, 95, 58, 0.05)",
+    borderStyle: "dashed",
+    bottom: -30,
+    right: 40,
+  },
+  patternDiamond1: {
+    position: "absolute",
+    width: 16,
+    height: 16,
+    backgroundColor: "rgba(26, 95, 58, 0.04)",
+    top: 50,
+    left: 10,
+    transform: [{ rotate: "45deg" }],
+    borderRadius: 3,
   },
   menuItem: {
     flexDirection: "row",
