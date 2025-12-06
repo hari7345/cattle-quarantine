@@ -19,6 +19,8 @@ const { width, height } = Dimensions.get("window");
 export default function RFIDScanner({ navigation, route }) {
   // Check if we're in read-only mode (coming from InitialPage for public viewing)
   const readOnly = route?.params?.readOnly || false;
+  // Mode can be 'add' (add new cattle) or 'view' (view/edit existing cattle)
+  const mode = route?.params?.mode || "view";
   const [isScanning, setIsScanning] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [rfidData, setRfidData] = useState("");
@@ -155,8 +157,14 @@ export default function RFIDScanner({ navigation, route }) {
     // Navigate after showing success message
     setTimeout(() => {
       setShowSuccess(false);
-      if (readOnly) {
-        // In read-only mode, navigate to CattleDetails to view (not edit)
+
+      if (mode === "add") {
+        // Add mode: Navigate to form for adding new cattle
+        navigation.navigate("Live StockDetailsForm", {
+          rfidData: simulatedRFID,
+        });
+      } else {
+        // View mode: Navigate to CattleDetails to view/edit existing cattle
         // In production, you would fetch the cattle data using the RFID tag
         const sampleCattleData = {
           id: "#890",
@@ -183,14 +191,10 @@ export default function RFIDScanner({ navigation, route }) {
           reproductiveStatus: "Healthy",
           note: "Animal is in good health and has completed quarantine protocol successfully.",
         };
+        // readOnly determines if user can edit
         navigation.navigate("CattleDetails", {
           cattle: sampleCattleData,
-          readOnly: true,
-        });
-      } else {
-        // In edit mode, navigate to the form
-        navigation.navigate("Live StockDetailsForm", {
-          rfidData: simulatedRFID,
+          readOnly: readOnly,
         });
       }
     }, 1800);

@@ -352,7 +352,9 @@ export default function Dashboard({ navigation }) {
             <TouchableOpacity
               style={styles.alertBanner}
               activeOpacity={0.9}
-              onPress={() => navigation.navigate("RFIDScanner")}
+              onPress={() =>
+                navigation.navigate("RFIDScanner", { mode: "add" })
+              }
             >
               <LinearGradient
                 colors={["#16a085", "#1abc9c", "#2ecc71"]}
@@ -436,7 +438,7 @@ export default function Dashboard({ navigation }) {
             style={styles.navItem}
             onPress={() => {
               setSelectedTab("Scanner");
-              navigation.navigate("RFIDScanner");
+              navigation.navigate("RFIDScanner", { readOnly: false });
             }}
           >
             <Image

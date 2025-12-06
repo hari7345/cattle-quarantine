@@ -222,7 +222,7 @@ export default function Profile({ navigation }) {
             style={styles.navItem}
             onPress={() => {
               setSelectedTab("Scanner");
-              navigation.navigate("RFIDScanner");
+              navigation.navigate("RFIDScanner", { readOnly: false });
             }}
           >
             <Image
