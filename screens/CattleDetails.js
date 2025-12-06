@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,14 +8,22 @@ import {
   Image,
   Dimensions,
   SafeAreaView,
+  TextInput,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { LinearGradient } from "expo-linear-gradient";
 
 const { width } = Dimensions.get("window");
 
 export default function CattleDetails({ navigation, route }) {
+  // Check if in read-only mode (user not logged in)
+  const readOnly = route?.params?.readOnly || false;
+
   // Get cattle data from route params or use default sample data
-  const cattleData = route?.params?.cattle || {
+  const initialCattleData = route?.params?.cattle || {
     id: "#890",
     name: "Twilight",
     price: "1.2 Lakhs",
@@ -48,15 +56,54 @@ export default function CattleDetails({ navigation, route }) {
     note: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed luctus elementum ultrices. Quisque elementum lacus et pretium molestie.",
   };
 
-  const InfoRow = ({ label, value }) => (
+  const [isEditing, setIsEditing] = useState(false);
+  const [cattleData, setCattleData] = useState(initialCattleData);
+  const [editedData, setEditedData] = useState(initialCattleData);
+
+  const handleEdit = () => {
+    setEditedData({ ...cattleData });
+    setIsEditing(true);
+  };
+
+  const handleSave = () => {
+    setCattleData({ ...editedData });
+    setIsEditing(false);
+    Alert.alert("Success", "Cattle details updated successfully!");
+  };
+
+  const handleCancel = () => {
+    setEditedData({ ...cattleData });
+    setIsEditing(false);
+  };
+
+  const updateField = (field, value) => {
+    setEditedData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const InfoRow = ({ label, value, field, editable = true }) => (
     <View style={styles.infoRow}>
       <Text style={styles.infoLabel}>{label}</Text>
-      <Text style={styles.infoValue}>{value}</Text>
+      {isEditing && editable ? (
+        <TextInput
+          style={styles.infoInput}
+          value={editedData[field]}
+          onChangeText={(text) => updateField(field, text)}
+          placeholder={label}
+          placeholderTextColor="#9ca3af"
+        />
+      ) : (
+        <Text style={styles.infoValue}>
+          {isEditing ? editedData[field] : value}
+        </Text>
+      )}
     </View>
   );
 
   return (
-    <View style={styles.mainContainer}>
+    <KeyboardAvoidingView
+      style={styles.mainContainer}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
       <StatusBar style="light" translucent backgroundColor="transparent" />
 
       {/* Header Image Section - Full Width Edge to Edge */}
@@ -107,21 +154,37 @@ export default function CattleDetails({ navigation, route }) {
 
           <View style={styles.infoGrid}>
             <View style={styles.infoGridRow}>
-              <InfoRow label="Breed" value={cattleData.breed} />
-              <InfoRow label="Gender" value={cattleData.gender} />
+              <InfoRow label="Breed" value={cattleData.breed} field="breed" />
+              <InfoRow
+                label="Gender"
+                value={cattleData.gender}
+                field="gender"
+              />
             </View>
 
             <View style={styles.gridDivider} />
 
             <View style={styles.infoGridRow}>
-              <InfoRow label="Age (Years)" value={cattleData.ageYears} />
-              <InfoRow label="Age (Months)" value={cattleData.ageMonths} />
+              <InfoRow
+                label="Age (Years)"
+                value={cattleData.ageYears}
+                field="ageYears"
+              />
+              <InfoRow
+                label="Age (Months)"
+                value={cattleData.ageMonths}
+                field="ageMonths"
+              />
             </View>
 
             <View style={styles.gridDivider} />
 
             <View style={styles.infoGridRow}>
-              <InfoRow label="Colour" value={cattleData.colour} />
+              <InfoRow
+                label="Colour"
+                value={cattleData.colour}
+                field="colour"
+              />
               <View style={styles.infoRow} />
             </View>
           </View>
@@ -131,17 +194,38 @@ export default function CattleDetails({ navigation, route }) {
 
           <View style={styles.infoGrid}>
             <View style={styles.infoGridRow}>
-              <InfoRow label="Weight" value={cattleData.weight} />
-              <InfoRow label="Height" value={cattleData.height} />
+              <InfoRow
+                label="Weight"
+                value={cattleData.weight}
+                field="weight"
+              />
+              <InfoRow
+                label="Height"
+                value={cattleData.height}
+                field="height"
+              />
             </View>
 
             <View style={styles.gridDivider} />
 
             <View style={styles.fullWidthRow}>
               <Text style={styles.infoLabel}>Distinguishing Marks</Text>
-              <Text style={styles.infoValue}>
-                {cattleData.distinguishingMarks}
-              </Text>
+              {isEditing ? (
+                <TextInput
+                  style={styles.infoInputFull}
+                  value={editedData.distinguishingMarks}
+                  onChangeText={(text) =>
+                    updateField("distinguishingMarks", text)
+                  }
+                  placeholder="Distinguishing Marks"
+                  placeholderTextColor="#9ca3af"
+                  multiline
+                />
+              ) : (
+                <Text style={styles.infoValue}>
+                  {cattleData.distinguishingMarks}
+                </Text>
+              )}
             </View>
           </View>
 
@@ -153,6 +237,7 @@ export default function CattleDetails({ navigation, route }) {
               <InfoRow
                 label="Shed/Batch Number"
                 value={cattleData.shedNumber}
+                field="shedNumber"
               />
               <View style={styles.infoRow} />
             </View>
@@ -160,8 +245,16 @@ export default function CattleDetails({ navigation, route }) {
             <View style={styles.gridDivider} />
 
             <View style={styles.infoGridRow}>
-              <InfoRow label="Arrival Date" value={cattleData.arrivalDate} />
-              <InfoRow label="Arrival Time" value={cattleData.arrivalTime} />
+              <InfoRow
+                label="Arrival Date"
+                value={cattleData.arrivalDate}
+                field="arrivalDate"
+              />
+              <InfoRow
+                label="Arrival Time"
+                value={cattleData.arrivalTime}
+                field="arrivalTime"
+              />
             </View>
           </View>
 
@@ -171,11 +264,23 @@ export default function CattleDetails({ navigation, route }) {
           <View style={styles.infoGrid}>
             <View style={styles.fullWidthRow}>
               <Text style={styles.infoLabel}>Vaccination Status</Text>
-              <View style={styles.statusBadge}>
-                <Text style={styles.statusBadgeText}>
-                  {cattleData.vaccinationStatus}
-                </Text>
-              </View>
+              {isEditing ? (
+                <TextInput
+                  style={styles.infoInputFull}
+                  value={editedData.vaccinationStatus}
+                  onChangeText={(text) =>
+                    updateField("vaccinationStatus", text)
+                  }
+                  placeholder="Vaccination Status"
+                  placeholderTextColor="#9ca3af"
+                />
+              ) : (
+                <View style={styles.statusBadge}>
+                  <Text style={styles.statusBadgeText}>
+                    {cattleData.vaccinationStatus}
+                  </Text>
+                </View>
+              )}
             </View>
 
             <View style={styles.gridDivider} />
@@ -184,8 +289,13 @@ export default function CattleDetails({ navigation, route }) {
               <InfoRow
                 label="Deworming Date"
                 value={cattleData.dewormingDate}
+                field="dewormingDate"
               />
-              <InfoRow label="Temperature" value={cattleData.temperature} />
+              <InfoRow
+                label="Temperature"
+                value={cattleData.temperature}
+                field="temperature"
+              />
             </View>
 
             <View style={styles.gridDivider} />
@@ -194,8 +304,13 @@ export default function CattleDetails({ navigation, route }) {
               <InfoRow
                 label="Last Checkup Date"
                 value={cattleData.lastCheckupDate}
+                field="lastCheckupDate"
               />
-              <InfoRow label="Behavior" value={cattleData.behavior} />
+              <InfoRow
+                label="Behavior"
+                value={cattleData.behavior}
+                field="behavior"
+              />
             </View>
           </View>
 
@@ -205,21 +320,94 @@ export default function CattleDetails({ navigation, route }) {
           {/* Reproductive Status Section */}
           <View style={styles.statusSection}>
             <Text style={styles.statusLabel}>Reproductive Status</Text>
-            <Text style={styles.statusValue}>
-              {cattleData.reproductiveStatus}
-            </Text>
+            {isEditing ? (
+              <TextInput
+                style={styles.infoInputFull}
+                value={editedData.reproductiveStatus}
+                onChangeText={(text) => updateField("reproductiveStatus", text)}
+                placeholder="Reproductive Status"
+                placeholderTextColor="#9ca3af"
+                multiline
+              />
+            ) : (
+              <Text style={styles.statusValue}>
+                {cattleData.reproductiveStatus}
+              </Text>
+            )}
           </View>
 
           {/* Note Section */}
           <View style={styles.noteSection}>
             <Text style={styles.noteTitle}>Note</Text>
-            <View style={styles.noteCard}>
-              <Text style={styles.noteText}>{cattleData.note}</Text>
-            </View>
+            {isEditing ? (
+              <TextInput
+                style={styles.noteInput}
+                value={editedData.note}
+                onChangeText={(text) => updateField("note", text)}
+                placeholder="Add a note..."
+                placeholderTextColor="#9ca3af"
+                multiline
+                numberOfLines={4}
+                textAlignVertical="top"
+              />
+            ) : (
+              <View style={styles.noteCard}>
+                <Text style={styles.noteText}>{cattleData.note}</Text>
+              </View>
+            )}
           </View>
+
+          {/* Bottom spacing for button */}
+          {!readOnly && <View style={{ height: 80 }} />}
         </ScrollView>
+
+        {/* Edit/Save Button - Only show when logged in (not readOnly) */}
+        {!readOnly && (
+          <View style={styles.bottomButtonContainer}>
+            {isEditing ? (
+              <View style={styles.editButtonRow}>
+                <TouchableOpacity
+                  style={styles.cancelButton}
+                  onPress={handleCancel}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.saveButton}
+                  onPress={handleSave}
+                  activeOpacity={0.8}
+                >
+                  <LinearGradient
+                    colors={["#1a5f3a", "#2d7a4f"]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={styles.saveButtonGradient}
+                  >
+                    <Text style={styles.saveButtonText}>Save Changes</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={styles.editButton}
+                onPress={handleEdit}
+                activeOpacity={0.8}
+              >
+                <LinearGradient
+                  colors={["#1a5f3a", "#2d7a4f"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.editButtonGradient}
+                >
+                  <Text style={styles.editButtonText}>Edit Details</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -457,5 +645,114 @@ const styles = StyleSheet.create({
     color: "#4a5568",
     lineHeight: 22,
     fontStyle: "italic",
+  },
+  infoInput: {
+    fontSize: 15,
+    color: "#2d3436",
+    fontWeight: "600",
+    borderBottomWidth: 1,
+    borderBottomColor: "#1a5f3a",
+    paddingVertical: 4,
+    paddingHorizontal: 0,
+    marginTop: 2,
+  },
+  infoInputFull: {
+    fontSize: 15,
+    color: "#2d3436",
+    fontWeight: "600",
+    borderWidth: 1,
+    borderColor: "#1a5f3a",
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    marginTop: 4,
+    backgroundColor: "#ffffff",
+  },
+  noteInput: {
+    fontSize: 14,
+    color: "#4a5568",
+    lineHeight: 22,
+    borderWidth: 1,
+    borderColor: "#1a5f3a",
+    borderRadius: 12,
+    padding: 16,
+    backgroundColor: "#ffffff",
+    minHeight: 100,
+  },
+  bottomButtonContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "#ffffff",
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    paddingBottom: 30,
+    borderTopWidth: 1,
+    borderTopColor: "#f0f0f0",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: -4,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 10,
+  },
+  editButton: {
+    borderRadius: 16,
+    overflow: "hidden",
+  },
+  editButtonGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+  },
+  editButtonIcon: {
+    fontSize: 18,
+    marginRight: 10,
+  },
+  editButtonText: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "700",
+    letterSpacing: 0.5,
+  },
+  editButtonRow: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  cancelButton: {
+    flex: 1,
+    borderRadius: 16,
+    borderWidth: 2,
+    borderColor: "#e0e0e0",
+    backgroundColor: "#ffffff",
+    paddingVertical: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  cancelButtonText: {
+    color: "#636e72",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  saveButton: {
+    flex: 2,
+    borderRadius: 16,
+    overflow: "hidden",
+  },
+  saveButtonGradient: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 16,
+  },
+  saveButtonText: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "700",
+    letterSpacing: 0.5,
   },
 });

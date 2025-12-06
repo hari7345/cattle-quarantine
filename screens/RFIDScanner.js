@@ -183,7 +183,10 @@ export default function RFIDScanner({ navigation, route }) {
           reproductiveStatus: "Healthy",
           note: "Animal is in good health and has completed quarantine protocol successfully.",
         };
-        navigation.navigate("CattleDetails", { cattle: sampleCattleData });
+        navigation.navigate("CattleDetails", {
+          cattle: sampleCattleData,
+          readOnly: true,
+        });
       } else {
         // In edit mode, navigate to the form
         navigation.navigate("Live StockDetailsForm", {
