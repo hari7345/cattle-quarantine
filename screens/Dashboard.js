@@ -9,11 +9,13 @@ import {
   SafeAreaView,
   Animated,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect } from "@react-navigation/native";
-import Location from "../assets/images/location.png";
+import * as ExpoLocation from "expo-location";
+import LocationIcon from "../assets/images/location.png";
 import Home from "../assets/icons/home.png";
 import HomeActive from "../assets/icons/homefilled.png";
 import Profile from "../assets/icons/profile.png";
@@ -28,6 +30,8 @@ export default function Dashboard({ navigation }) {
   const [fadeAnim] = useState(new Animated.Value(0));
   const [scaleAnim] = useState(new Animated.Value(0.9));
   const [selectedTab, setSelectedTab] = useState("Home");
+  const [locationName, setLocationName] = useState("Fetching location...");
+  const [isLoadingLocation, setIsLoadingLocation] = useState(true);
 
   // Reset selected tab to Home when Dashboard comes into focus
   useFocusEffect(
@@ -35,6 +39,58 @@ export default function Dashboard({ navigation }) {
       setSelectedTab("Home");
     }, [])
   );
+
+  // Fetch device location
+  useEffect(() => {
+    const fetchLocation = async () => {
+      try {
+        // Request permission
+        const { status } =
+          await ExpoLocation.requestForegroundPermissionsAsync();
+
+        if (status !== "granted") {
+          setLocationName("Location permission denied");
+          setIsLoadingLocation(false);
+          return;
+        }
+
+        // Get current position
+        const location = await ExpoLocation.getCurrentPositionAsync({
+          accuracy: ExpoLocation.Accuracy.Balanced,
+        });
+
+        // Reverse geocode to get address
+        const [address] = await ExpoLocation.reverseGeocodeAsync({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        });
+
+        if (address) {
+          // Build a readable location string
+          const parts = [];
+          if (address.city) parts.push(address.city);
+          else if (address.subregion) parts.push(address.subregion);
+          if (address.region) parts.push(address.region);
+
+          const locationStr =
+            parts.length > 0
+              ? `Farm Weather - ${parts.join(", ")}`
+              : "Farm Weather - Your Location";
+
+          setLocationName(locationStr);
+        } else {
+          setLocationName("Farm Weather - Your Location");
+        }
+      } catch (error) {
+        console.log("Location error:", error);
+        setLocationName("Unable to fetch location");
+      } finally {
+        setIsLoadingLocation(false);
+      }
+    };
+
+    fetchLocation();
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -177,10 +233,19 @@ export default function Dashboard({ navigation }) {
           >
             <View style={styles.weatherContent}>
               <View style={styles.weatherHeader}>
-                <Image source={Location} style={styles.locationIcon} />
-                <Text style={styles.locationText}>
-                  Farm Weather - Oakroot Ranch
-                </Text>
+                <Image source={LocationIcon} style={styles.locationIcon} />
+                {isLoadingLocation ? (
+                  <View style={styles.locationLoading}>
+                    <ActivityIndicator size="small" color="#1a5f3a" />
+                    <Text style={styles.locationText}>
+                      Fetching location...
+                    </Text>
+                  </View>
+                ) : (
+                  <Text style={styles.locationText} numberOfLines={1}>
+                    {locationName}
+                  </Text>
+                )}
               </View>
 
               <View style={styles.weatherMain}>
@@ -784,6 +849,13 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: "#2d3436",
     fontWeight: "600",
+    flex: 1,
+  },
+  locationLoading: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    flex: 1,
   },
   weatherMain: {
     flexDirection: "row",
