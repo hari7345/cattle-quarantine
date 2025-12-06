@@ -20,7 +20,7 @@ import ProfileIconActive from "../assets/icons/profilefilled.png";
 import Scanner from "../assets/icons/scanner.png";
 import Statistic from "../assets/icons/statistics.png";
 import StatisticActive from "../assets/icons/statisticsfilled.png";
-
+import ProfileImg from "../assets/images/profile.png";
 export default function Profile({ navigation }) {
   const [selectedTab, setSelectedTab] = useState("Profile");
 
@@ -118,11 +118,11 @@ export default function Profile({ navigation }) {
             <View style={styles.avatarContainer}>
               <View style={styles.avatarWrapper}>
                 <LinearGradient
-                  colors={["#4A90E2", "#5CA3E8"]}
+                  colors={["#2d7a4f", "#3d8f5f", "#4fa36e"]}
                   style={styles.avatarGradient}
                 >
                   {/* Placeholder avatar - replace with actual image */}
-                  <Text style={styles.avatarEmoji}>🐄</Text>
+                  <Image source={ProfileImg} style={styles.avatarImage} />
                 </LinearGradient>
               </View>
 
@@ -476,6 +476,11 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.3,
     shadowRadius: 8,
+  },
+  avatarImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 50,
   },
   avatarEmoji: {
     fontSize: 56,
