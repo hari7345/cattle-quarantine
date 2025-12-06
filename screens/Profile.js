@@ -31,15 +31,15 @@ export default function Profile({ navigation }) {
     }, [])
   );
   const menuItems = [
+    // {
+    //   id: 1,
+    //   title: "My registires",
+    //   icon: <Image source={key} style={styles.keyIcon} />,
+    //   iconBg: "#8B9DC3",
+    //   route: "ChangePassword",
+    // },
     {
       id: 1,
-      title: "Change Password",
-      icon: <Image source={key} style={styles.keyIcon} />,
-      iconBg: "#8B9DC3",
-      route: "ChangePassword",
-    },
-    {
-      id: 2,
       title: "Logout",
       icon: <Image source={logout} style={styles.logoutIcon} />,
       iconBg: "#8B9DC3",
@@ -48,8 +48,15 @@ export default function Profile({ navigation }) {
   ];
 
   const handleMenuPress = (route) => {
-    console.log(`Navigating to ${route}`);
-    // navigation.navigate(route);
+    if (route === "Logout") {
+      // Reset navigation stack and go to Initial screen
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Initial" }],
+      });
+    } else {
+      navigation.navigate(route);
+    }
   };
 
   const handleBack = () => {
