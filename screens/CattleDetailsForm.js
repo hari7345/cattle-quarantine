@@ -26,23 +26,44 @@ export default function LiveStockDetailsForm({ route, navigation }) {
 
   // Form state - pre-filled with mock data from RFID
   const [formData, setFormData] = useState({
-    rfidTag: rfidData || "RFID-2024-001",
+    // A. Basic Cattle Info
+    cattleId: rfidData || "CATTLE-2024-001",
     breed: "Holstein Friesian",
+    gender: "Female",
     ageYears: "3",
     ageMonths: "6",
-    gender: "Female",
     colour: "Black and White",
+    distinguishingMarks: "Small white patch on left shoulder",
     weight: "450",
     height: "145",
-    distinguishingMarks: "Small white patch on left shoulder",
     shedNumber: "A-12",
-    arrivalDate: "2024-12-01",
-    arrivalTime: "10:30 AM",
+    registeredBy: "Dr. John Smith",
+    dateOfEntry: "2024-12-01",
+    dateOfDischarge: "",
+    exportCountry: "UAE",
+    status: "Quarantine",
+    ownerId: "OWN-2024-0045",
+
+    // B. Health Information
     vaccinationStatus: "Up to date",
     dewormingDate: "2024-11-15",
+    latestVetCheckupDate: "2024-11-20",
+    healthConditionSummary: "Healthy, no visible signs of illness",
     temperature: "38.5",
-    lastCheckupDate: "2024-11-20",
     behavior: "Calm",
+
+    // C. Medical Reports (file references)
+    bloodTestReport: null,
+    stoolTestReport: null,
+    pregnancyTest: null,
+    otherDiagnosticReport: null,
+  });
+
+  // Cattle photos state
+  const [cattlePhotos, setCattlePhotos] = useState({
+    front: null,
+    left: null,
+    right: null,
   });
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -80,6 +101,25 @@ export default function LiveStockDetailsForm({ route, navigation }) {
   const handleImageUpload = () => {
     // Image upload logic would go here
     console.log("Open camera for image upload");
+  };
+
+  const handlePhotoUpload = (viewType) => {
+    // Photo upload logic for cattle photos (front, left, right)
+    console.log(`Open camera for ${viewType} view photo`);
+    // In a real app, this would open the camera/gallery picker
+    // and set the photo URI like:
+    // setCattlePhotos(prev => ({ ...prev, [viewType]: imageUri }));
+  };
+
+  const handleReportUpload = (reportType) => {
+    // Report upload logic for medical reports
+    console.log(`Upload ${reportType}`);
+    // In a real app, this would open a document picker
+    // For demo, we'll just toggle the uploaded state
+    setFormData((prev) => ({
+      ...prev,
+      [reportType]: prev[reportType] ? null : `${reportType}_file.pdf`,
+    }));
   };
 
   const handleClearField = (field) => {
@@ -134,13 +174,20 @@ export default function LiveStockDetailsForm({ route, navigation }) {
   const renderDropdown = (label, field, placeholder, halfWidth = false) => {
     // Simple click handler to cycle through options (for demo purposes)
     const handleDropdownPress = () => {
-      if (field === "gender") {
-        const options = ["Male", "Female"];
-        const currentIndex = options.indexOf(formData[field]);
-        const nextIndex = (currentIndex + 1) % options.length;
-        handleInputChange(field, options[nextIndex]);
-      } else if (field === "behavior") {
-        const options = ["Calm", "Aggressive", "Active"];
+      const dropdownOptions = {
+        gender: ["Male", "Female"],
+        behavior: ["Calm", "Active", "Aggressive"],
+        status: ["Quarantine", "Cleared", "Under Observation", "Rejected"],
+        vaccinationStatus: [
+          "Up to date",
+          "Pending",
+          "Overdue",
+          "Not Vaccinated",
+        ],
+      };
+
+      const options = dropdownOptions[field];
+      if (options) {
         const currentIndex = options.indexOf(formData[field]);
         const nextIndex = (currentIndex + 1) % options.length;
         handleInputChange(field, options[nextIndex]);
@@ -203,11 +250,16 @@ export default function LiveStockDetailsForm({ route, navigation }) {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.formContainer}>
-            {/* Section: Basic Information */}
+            {/* Section A: Basic Cattle Info */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Basic Information</Text>
+              <View style={styles.sectionHeader}>
+                <View style={styles.sectionBadge}>
+                  <Text style={styles.sectionBadgeText}>A</Text>
+                </View>
+                <Text style={styles.sectionTitle}>Basic Cattle Info</Text>
+              </View>
 
-              {renderInput("RFID Tag*", "rfidTag", "Enter RFID tag", {
+              {renderInput("Cattle ID*", "cattleId", "Enter Cattle ID", {
                 editable: false,
               })}
 
@@ -223,18 +275,23 @@ export default function LiveStockDetailsForm({ route, navigation }) {
                   halfWidth: true,
                   keyboardType: "numeric",
                 })}
-                {renderInput("Age (Months)*", "ageMonths", "Months", {
+                {renderInput("Age (Months)", "ageMonths", "Months", {
                   halfWidth: true,
                   keyboardType: "numeric",
                 })}
               </View>
 
               {renderInput("Colour", "colour", "Enter colour")}
-            </View>
 
-            {/* Section: Physical Attributes */}
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Physical Attributes</Text>
+              {renderInput(
+                "Distinguishing Marks",
+                "distinguishingMarks",
+                "Enter any distinguishing marks",
+                {
+                  multiline: true,
+                  showClearIcon: true,
+                }
+              )}
 
               <View style={styles.row}>
                 {renderInput("Weight (kg)*", "weight", "Enter weight", {
@@ -247,51 +304,139 @@ export default function LiveStockDetailsForm({ route, navigation }) {
                 })}
               </View>
 
-              {renderInput(
-                "Distinguishing Marks",
-                "distinguishingMarks",
-                "Enter any distinguishing marks",
-                {
-                  multiline: true,
-                  showClearIcon: true,
-                }
-              )}
-            </View>
+              {/* Cattle Photos */}
+              <Text style={styles.subSectionTitle}>Cattle Photos</Text>
+              <View style={styles.photoGrid}>
+                <TouchableOpacity
+                  style={styles.photoBox}
+                  onPress={() => handlePhotoUpload("front")}
+                >
+                  {cattlePhotos.front ? (
+                    <Image
+                      source={{ uri: cattlePhotos.front }}
+                      style={styles.photoImage}
+                    />
+                  ) : (
+                    <>
+                      <Text style={styles.photoIcon}>📷</Text>
+                      <Text style={styles.photoLabel}>Front View</Text>
+                    </>
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.photoBox}
+                  onPress={() => handlePhotoUpload("left")}
+                >
+                  {cattlePhotos.left ? (
+                    <Image
+                      source={{ uri: cattlePhotos.left }}
+                      style={styles.photoImage}
+                    />
+                  ) : (
+                    <>
+                      <Text style={styles.photoIcon}>📷</Text>
+                      <Text style={styles.photoLabel}>Left View</Text>
+                    </>
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.photoBox}
+                  onPress={() => handlePhotoUpload("right")}
+                >
+                  {cattlePhotos.right ? (
+                    <Image
+                      source={{ uri: cattlePhotos.right }}
+                      style={styles.photoImage}
+                    />
+                  ) : (
+                    <>
+                      <Text style={styles.photoIcon}>📷</Text>
+                      <Text style={styles.photoLabel}>Right View</Text>
+                    </>
+                  )}
+                </TouchableOpacity>
+              </View>
 
-            {/* Section: Location & Arrival */}
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Location & Arrival</Text>
-
               {renderInput(
-                "Shed/Batch Number",
+                "Shed Number",
                 "shedNumber",
                 "Enter shed or batch number"
               )}
 
+              {renderInput(
+                "Registered By*",
+                "registeredBy",
+                "Enter registrar name"
+              )}
+
               <View style={styles.row}>
-                {renderInput("Arrival Date*", "arrivalDate", "YYYY-MM-DD", {
+                {renderInput("Date of Entry*", "dateOfEntry", "YYYY-MM-DD", {
                   halfWidth: true,
                 })}
-                {renderInput("Arrival Time", "arrivalTime", "HH:MM AM/PM", {
+                {renderInput(
+                  "Date of Discharge",
+                  "dateOfDischarge",
+                  "YYYY-MM-DD",
+                  {
+                    halfWidth: true,
+                  }
+                )}
+              </View>
+
+              {renderInput(
+                "Country for Export",
+                "exportCountry",
+                "Enter destination country"
+              )}
+
+              <View style={styles.row}>
+                {renderDropdown("Status*", "status", "Select status", true)}
+                {renderInput("Owner ID", "ownerId", "Enter owner ID", {
                   halfWidth: true,
                 })}
               </View>
             </View>
 
-            {/* Section: Health Records */}
+            {/* Section B: Health Information */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Health Records</Text>
+              <View style={styles.sectionHeader}>
+                <View style={styles.sectionBadge}>
+                  <Text style={styles.sectionBadgeText}>B</Text>
+                </View>
+                <Text style={styles.sectionTitle}>Health Information</Text>
+              </View>
 
-              {renderInput(
-                "Vaccination Status",
+              {renderDropdown(
+                "Vaccination Status*",
                 "vaccinationStatus",
-                "Enter vaccination status"
+                "Select status"
               )}
 
               <View style={styles.row}>
                 {renderInput("Deworming Date", "dewormingDate", "YYYY-MM-DD", {
                   halfWidth: true,
                 })}
+                {renderInput(
+                  "Latest Vet Checkup",
+                  "latestVetCheckupDate",
+                  "YYYY-MM-DD",
+                  {
+                    halfWidth: true,
+                  }
+                )}
+              </View>
+
+              {renderInput(
+                "Summary of Health Condition",
+                "healthConditionSummary",
+                "Enter summary of health condition",
+                {
+                  multiline: true,
+                  showClearIcon: true,
+                }
+              )}
+
+              <View style={styles.row}>
                 {renderInput(
                   "Temperature (°C)",
                   "temperature",
@@ -301,36 +446,99 @@ export default function LiveStockDetailsForm({ route, navigation }) {
                     keyboardType: "decimal-pad",
                   }
                 )}
+                {renderDropdown(
+                  "General Behaviour",
+                  "behavior",
+                  "Select",
+                  true
+                )}
               </View>
-
-              {renderInput(
-                "Last Checkup Date",
-                "lastCheckupDate",
-                "YYYY-MM-DD"
-              )}
-
-              {renderDropdown("Behavior", "behavior", "Select behavior")}
             </View>
 
-            {/* Section: Upload Image */}
+            {/* Section C: Medical Reports */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Upload Image</Text>
-              <View style={styles.uploadContainer}>
-                <View style={styles.uploadIconContainer}>
-                  <View style={styles.uploadIconCircle}>
-                    <Text style={styles.uploadIcon}>📷</Text>
-                  </View>
-                  <Text style={styles.uploadText}>Tap to upload photo</Text>
-                  <Text style={styles.uploadSubtext}>
-                    JPG, PNG, or PDF (max 800x400px)
-                  </Text>
+              <View style={styles.sectionHeader}>
+                <View style={styles.sectionBadge}>
+                  <Text style={styles.sectionBadgeText}>C</Text>
                 </View>
-                <Text style={styles.uploadOr}>OR</Text>
+                <Text style={styles.sectionTitle}>Medical Reports</Text>
+              </View>
+
+              {/* Blood Test Report */}
+              <View style={styles.reportUploadItem}>
+                <View style={styles.reportInfo}>
+                  <Text style={styles.reportIcon}>🩸</Text>
+                  <View style={styles.reportTextContainer}>
+                    <Text style={styles.reportLabel}>Blood Test Report</Text>
+                    <Text style={styles.reportSubtext}>PDF or Image</Text>
+                  </View>
+                </View>
                 <TouchableOpacity
-                  style={styles.cameraButton}
-                  onPress={handleImageUpload}
+                  style={styles.uploadBtn}
+                  onPress={() => handleReportUpload("bloodTestReport")}
                 >
-                  <Text style={styles.cameraButtonText}>Open Camera</Text>
+                  <Text style={styles.uploadBtnText}>
+                    {formData.bloodTestReport ? "✓ Uploaded" : "Upload"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Stool Test Report */}
+              <View style={styles.reportUploadItem}>
+                <View style={styles.reportInfo}>
+                  <Text style={styles.reportIcon}>🧪</Text>
+                  <View style={styles.reportTextContainer}>
+                    <Text style={styles.reportLabel}>Stool Test Report</Text>
+                    <Text style={styles.reportSubtext}>PDF or Image</Text>
+                  </View>
+                </View>
+                <TouchableOpacity
+                  style={styles.uploadBtn}
+                  onPress={() => handleReportUpload("stoolTestReport")}
+                >
+                  <Text style={styles.uploadBtnText}>
+                    {formData.stoolTestReport ? "✓ Uploaded" : "Upload"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Pregnancy Test */}
+              <View style={styles.reportUploadItem}>
+                <View style={styles.reportInfo}>
+                  <Text style={styles.reportIcon}>🤰</Text>
+                  <View style={styles.reportTextContainer}>
+                    <Text style={styles.reportLabel}>Pregnancy Test</Text>
+                    <Text style={styles.reportSubtext}>If applicable</Text>
+                  </View>
+                </View>
+                <TouchableOpacity
+                  style={styles.uploadBtn}
+                  onPress={() => handleReportUpload("pregnancyTest")}
+                >
+                  <Text style={styles.uploadBtnText}>
+                    {formData.pregnancyTest ? "✓ Uploaded" : "Upload"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Other Diagnostic Report */}
+              <View style={styles.reportUploadItem}>
+                <View style={styles.reportInfo}>
+                  <Text style={styles.reportIcon}>📋</Text>
+                  <View style={styles.reportTextContainer}>
+                    <Text style={styles.reportLabel}>
+                      Other Diagnostic Report
+                    </Text>
+                    <Text style={styles.reportSubtext}>Any other reports</Text>
+                  </View>
+                </View>
+                <TouchableOpacity
+                  style={styles.uploadBtn}
+                  onPress={() => handleReportUpload("otherDiagnosticReport")}
+                >
+                  <Text style={styles.uploadBtnText}>
+                    {formData.otherDiagnosticReport ? "✓ Uploaded" : "Upload"}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -438,13 +646,49 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   section: {
-    marginBottom: 24,
+    marginBottom: 28,
+    backgroundColor: "#ffffff",
+    borderRadius: 12,
+    padding: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e8e8e8",
+  },
+  sectionBadge: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "#1a5f3a",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 10,
+  },
+  sectionBadgeText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#ffffff",
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: "600",
     color: "#2c3e50",
-    marginBottom: 16,
+  },
+  subSectionTitle: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#5a6c7d",
+    marginTop: 8,
+    marginBottom: 12,
   },
   row: {
     flexDirection: "row",
@@ -595,6 +839,85 @@ const styles = StyleSheet.create({
   },
   cameraButtonText: {
     fontSize: 14,
+    fontWeight: "600",
+    color: "#ffffff",
+  },
+  // Photo Grid Styles
+  photoGrid: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 16,
+    gap: 10,
+  },
+  photoBox: {
+    flex: 1,
+    aspectRatio: 1,
+    backgroundColor: "#f5f6fa",
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: "#e0e0e0",
+    borderStyle: "dashed",
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
+  },
+  photoIcon: {
+    fontSize: 24,
+    marginBottom: 4,
+  },
+  photoLabel: {
+    fontSize: 10,
+    fontWeight: "500",
+    color: "#8e9aaa",
+    textAlign: "center",
+  },
+  photoImage: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
+  // Report Upload Styles
+  reportUploadItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "#f8f9fa",
+    borderRadius: 10,
+    padding: 14,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#e8e8e8",
+  },
+  reportInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+  reportIcon: {
+    fontSize: 24,
+    marginRight: 12,
+  },
+  reportTextContainer: {
+    flex: 1,
+  },
+  reportLabel: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#2c3e50",
+    marginBottom: 2,
+  },
+  reportSubtext: {
+    fontSize: 11,
+    color: "#8e9aaa",
+  },
+  uploadBtn: {
+    backgroundColor: "#1a5f3a",
+    borderRadius: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  uploadBtnText: {
+    fontSize: 12,
     fontWeight: "600",
     color: "#ffffff",
   },

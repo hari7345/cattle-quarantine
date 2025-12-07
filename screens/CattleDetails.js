@@ -25,35 +25,42 @@ export default function CattleDetails({ navigation, route }) {
   // Get cattle data from route params or use default sample data
   const initialCattleData = route?.params?.cattle || {
     id: "#890",
-    name: "Twilight",
-    price: "1.2 Lakhs",
-    rating: 4.9,
-    reviews: 146,
     image: require("../assets/images/initial.png"),
-    // Basic Information
-    rfidTag: "RFID-2024-001",
+
+    // A. Basic Cattle Info
+    cattleId: "CATTLE-2024-001",
     breed: "Holstein Friesian",
+    gender: "Female",
     ageYears: "3",
     ageMonths: "6",
-    gender: "Male",
     colour: "Black and White",
-    // Physical Attributes
-    weight: "450 Kg",
-    height: "145 cm",
     distinguishingMarks: "Small white patch on left shoulder",
-    // Location & Arrival
+    weight: "450",
+    height: "145",
     shedNumber: "A-12",
-    arrivalDate: "2024-12-01",
-    arrivalTime: "10:30 AM",
-    // Health Records
+    registeredBy: "Dr. John Smith",
+    dateOfEntry: "2024-12-01",
+    dateOfDischarge: "",
+    exportCountry: "UAE",
+    status: "Quarantine",
+    ownerId: "OWN-2024-0045",
+
+    // B. Health Information
     vaccinationStatus: "Up to date",
     dewormingDate: "2024-11-15",
-    temperature: "38.5°C",
-    lastCheckupDate: "2024-11-20",
+    latestVetCheckupDate: "2024-11-20",
+    healthConditionSummary: "Healthy, no visible signs of illness",
+    temperature: "38.5",
     behavior: "Calm",
+
+    // C. Medical Reports
+    bloodTestReport: "blood_test_report.pdf",
+    stoolTestReport: null,
+    pregnancyTest: null,
+    otherDiagnosticReport: null,
+
     // Additional
-    reproductiveStatus: "Lorem ipsum dolor sit amet",
-    note: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed luctus elementum ultrices. Quisque elementum lacus et pretium molestie.",
+    note: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed luctus elementum ultrices.",
   };
 
   const [isEditing, setIsEditing] = useState(false);
@@ -129,28 +136,28 @@ export default function CattleDetails({ navigation, route }) {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
-          {/* Name, ID, Price & Rating */}
+          {/* Cattle ID & Status Header */}
           <View style={styles.titleSection}>
             <View style={styles.titleLeft}>
               <View style={styles.nameRow}>
-                <Text style={styles.cattleName}>{cattleData.rfidTag}</Text>
-                {/* <Text style={styles.cattleId}>{cattleData.id}</Text> */}
+                <Text style={styles.cattleName}>{cattleData.cattleId}</Text>
               </View>
             </View>
-            {/* <Text style={styles.priceText}>{cattleData.price}</Text> */}
+            <View style={styles.statusPill}>
+              <Text style={styles.statusPillText}>{cattleData.status}</Text>
+            </View>
           </View>
 
           {/* Divider */}
           <View style={styles.divider} />
 
-          {/* RFID Tag Badge */}
-          {/* <View style={styles.rfidBadge}>
-            <Text style={styles.rfidIcon}>📡</Text>
-            <Text style={styles.rfidText}>{cattleData.rfidTag}</Text>
-          </View> */}
-
-          {/* Basic Information Section */}
-          <Text style={styles.sectionTitle}>Basic Information</Text>
+          {/* Section A: Basic Cattle Info */}
+          <View style={styles.sectionHeader}>
+            <View style={styles.sectionBadge}>
+              <Text style={styles.sectionBadgeText}>A</Text>
+            </View>
+            <Text style={styles.sectionTitle}>Basic Cattle Info</Text>
+          </View>
 
           <View style={styles.infoGrid}>
             <View style={styles.infoGridRow}>
@@ -187,24 +194,6 @@ export default function CattleDetails({ navigation, route }) {
               />
               <View style={styles.infoRow} />
             </View>
-          </View>
-
-          {/* Physical Attributes Section */}
-          <Text style={styles.sectionTitle}>Physical Attributes</Text>
-
-          <View style={styles.infoGrid}>
-            <View style={styles.infoGridRow}>
-              <InfoRow
-                label="Weight"
-                value={cattleData.weight}
-                field="weight"
-              />
-              <InfoRow
-                label="Height"
-                value={cattleData.height}
-                field="height"
-              />
-            </View>
 
             <View style={styles.gridDivider} />
 
@@ -227,39 +216,75 @@ export default function CattleDetails({ navigation, route }) {
                 </Text>
               )}
             </View>
-          </View>
 
-          {/* Location & Arrival Section */}
-          <Text style={styles.sectionTitle}>Location & Arrival</Text>
+            <View style={styles.gridDivider} />
 
-          <View style={styles.infoGrid}>
             <View style={styles.infoGridRow}>
               <InfoRow
-                label="Shed/Batch Number"
-                value={cattleData.shedNumber}
-                field="shedNumber"
+                label="Weight (kg)"
+                value={cattleData.weight}
+                field="weight"
               />
-              <View style={styles.infoRow} />
+              <InfoRow
+                label="Height (cm)"
+                value={cattleData.height}
+                field="height"
+              />
             </View>
 
             <View style={styles.gridDivider} />
 
             <View style={styles.infoGridRow}>
               <InfoRow
-                label="Arrival Date"
-                value={cattleData.arrivalDate}
-                field="arrivalDate"
+                label="Shed Number"
+                value={cattleData.shedNumber}
+                field="shedNumber"
               />
               <InfoRow
-                label="Arrival Time"
-                value={cattleData.arrivalTime}
-                field="arrivalTime"
+                label="Registered By"
+                value={cattleData.registeredBy}
+                field="registeredBy"
+              />
+            </View>
+
+            <View style={styles.gridDivider} />
+
+            <View style={styles.infoGridRow}>
+              <InfoRow
+                label="Date of Entry"
+                value={cattleData.dateOfEntry}
+                field="dateOfEntry"
+              />
+              <InfoRow
+                label="Date of Discharge"
+                value={cattleData.dateOfDischarge || "—"}
+                field="dateOfDischarge"
+              />
+            </View>
+
+            <View style={styles.gridDivider} />
+
+            <View style={styles.infoGridRow}>
+              <InfoRow
+                label="Country for Export"
+                value={cattleData.exportCountry}
+                field="exportCountry"
+              />
+              <InfoRow
+                label="Owner ID"
+                value={cattleData.ownerId}
+                field="ownerId"
               />
             </View>
           </View>
 
-          {/* Health Records Section */}
-          <Text style={styles.sectionTitle}>Health Records</Text>
+          {/* Section B: Health Information */}
+          <View style={styles.sectionHeader}>
+            <View style={styles.sectionBadge}>
+              <Text style={styles.sectionBadgeText}>B</Text>
+            </View>
+            <Text style={styles.sectionTitle}>Health Information</Text>
+          </View>
 
           <View style={styles.infoGrid}>
             <View style={styles.fullWidthRow}>
@@ -292,49 +317,166 @@ export default function CattleDetails({ navigation, route }) {
                 field="dewormingDate"
               />
               <InfoRow
-                label="Temperature"
-                value={cattleData.temperature}
-                field="temperature"
+                label="Latest Vet Checkup"
+                value={cattleData.latestVetCheckupDate}
+                field="latestVetCheckupDate"
               />
+            </View>
+
+            <View style={styles.gridDivider} />
+
+            <View style={styles.fullWidthRow}>
+              <Text style={styles.infoLabel}>Summary of Health Condition</Text>
+              {isEditing ? (
+                <TextInput
+                  style={styles.infoInputFull}
+                  value={editedData.healthConditionSummary}
+                  onChangeText={(text) =>
+                    updateField("healthConditionSummary", text)
+                  }
+                  placeholder="Health Condition Summary"
+                  placeholderTextColor="#9ca3af"
+                  multiline
+                />
+              ) : (
+                <Text style={styles.infoValue}>
+                  {cattleData.healthConditionSummary}
+                </Text>
+              )}
             </View>
 
             <View style={styles.gridDivider} />
 
             <View style={styles.infoGridRow}>
               <InfoRow
-                label="Last Checkup Date"
-                value={cattleData.lastCheckupDate}
-                field="lastCheckupDate"
+                label="Temperature (°C)"
+                value={cattleData.temperature}
+                field="temperature"
               />
               <InfoRow
-                label="Behavior"
+                label="General Behaviour"
                 value={cattleData.behavior}
                 field="behavior"
               />
             </View>
           </View>
 
+          {/* Section C: Medical Reports */}
+          <View style={styles.sectionHeader}>
+            <View style={styles.sectionBadge}>
+              <Text style={styles.sectionBadgeText}>C</Text>
+            </View>
+            <Text style={styles.sectionTitle}>Medical Reports</Text>
+          </View>
+
+          <View style={styles.infoGrid}>
+            <View style={styles.reportRow}>
+              <View style={styles.reportInfo}>
+                <Text style={styles.reportIcon}>🩸</Text>
+                <Text style={styles.reportLabel}>Blood Test Report</Text>
+              </View>
+              <View
+                style={
+                  cattleData.bloodTestReport
+                    ? styles.reportStatusUploaded
+                    : styles.reportStatusPending
+                }
+              >
+                <Text
+                  style={
+                    cattleData.bloodTestReport
+                      ? styles.reportStatusTextUploaded
+                      : styles.reportStatusTextPending
+                  }
+                >
+                  {cattleData.bloodTestReport ? "Uploaded" : "Not Uploaded"}
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.gridDivider} />
+
+            <View style={styles.reportRow}>
+              <View style={styles.reportInfo}>
+                <Text style={styles.reportIcon}>🧪</Text>
+                <Text style={styles.reportLabel}>Stool Test Report</Text>
+              </View>
+              <View
+                style={
+                  cattleData.stoolTestReport
+                    ? styles.reportStatusUploaded
+                    : styles.reportStatusPending
+                }
+              >
+                <Text
+                  style={
+                    cattleData.stoolTestReport
+                      ? styles.reportStatusTextUploaded
+                      : styles.reportStatusTextPending
+                  }
+                >
+                  {cattleData.stoolTestReport ? "Uploaded" : "Not Uploaded"}
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.gridDivider} />
+
+            <View style={styles.reportRow}>
+              <View style={styles.reportInfo}>
+                <Text style={styles.reportIcon}>🤰</Text>
+                <Text style={styles.reportLabel}>Pregnancy Test</Text>
+              </View>
+              <View
+                style={
+                  cattleData.pregnancyTest
+                    ? styles.reportStatusUploaded
+                    : styles.reportStatusPending
+                }
+              >
+                <Text
+                  style={
+                    cattleData.pregnancyTest
+                      ? styles.reportStatusTextUploaded
+                      : styles.reportStatusTextPending
+                  }
+                >
+                  {cattleData.pregnancyTest ? "Uploaded" : "N/A"}
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.gridDivider} />
+
+            <View style={styles.reportRow}>
+              <View style={styles.reportInfo}>
+                <Text style={styles.reportIcon}>📋</Text>
+                <Text style={styles.reportLabel}>Other Diagnostic Report</Text>
+              </View>
+              <View
+                style={
+                  cattleData.otherDiagnosticReport
+                    ? styles.reportStatusUploaded
+                    : styles.reportStatusPending
+                }
+              >
+                <Text
+                  style={
+                    cattleData.otherDiagnosticReport
+                      ? styles.reportStatusTextUploaded
+                      : styles.reportStatusTextPending
+                  }
+                >
+                  {cattleData.otherDiagnosticReport
+                    ? "Uploaded"
+                    : "Not Uploaded"}
+                </Text>
+              </View>
+            </View>
+          </View>
+
           {/* Main Divider */}
           <View style={styles.mainDivider} />
-
-          {/* Reproductive Status Section */}
-          <View style={styles.statusSection}>
-            <Text style={styles.statusLabel}>Reproductive Status</Text>
-            {isEditing ? (
-              <TextInput
-                style={styles.infoInputFull}
-                value={editedData.reproductiveStatus}
-                onChangeText={(text) => updateField("reproductiveStatus", text)}
-                placeholder="Reproductive Status"
-                placeholderTextColor="#9ca3af"
-                multiline
-              />
-            ) : (
-              <Text style={styles.statusValue}>
-                {cattleData.reproductiveStatus}
-              </Text>
-            )}
-          </View>
 
           {/* Note Section */}
           <View style={styles.noteSection}>
@@ -550,12 +692,41 @@ const styles = StyleSheet.create({
     color: "#1a5f3a",
     letterSpacing: 0.5,
   },
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+    marginTop: 8,
+  },
+  sectionBadge: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "#1a5f3a",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 10,
+  },
+  sectionBadgeText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#ffffff",
+  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "700",
     color: "#2d3436",
-    marginBottom: 16,
-    marginTop: 8,
+  },
+  statusPill: {
+    backgroundColor: "#fff3cd",
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  statusPillText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#856404",
   },
   infoGrid: {
     backgroundColor: "#fafafa",
@@ -604,6 +775,50 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "600",
     color: "#155724",
+  },
+  reportRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 12,
+  },
+  reportInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+  reportIcon: {
+    fontSize: 20,
+    marginRight: 10,
+  },
+  reportLabel: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#2d3436",
+  },
+  reportStatusUploaded: {
+    backgroundColor: "#d4edda",
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  reportStatusTextUploaded: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#155724",
+  },
+  reportStatusPending: {
+    backgroundColor: "#f8f9fa",
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+  },
+  reportStatusTextPending: {
+    fontSize: 12,
+    fontWeight: "500",
+    color: "#6c757d",
   },
   mainDivider: {
     height: 1,
